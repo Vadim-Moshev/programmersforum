@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Удалить как спам
-// @version      1
+// @version      1.1
 // @description  Позволяет удалять спамерские сообщения прямо со страницы темы
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
@@ -658,13 +658,11 @@
 	    	null,
 	    	{
 	    		color: "#22229C",
-	    		fontWeight: "bold",
 	    		cursor: "pointer",
 	    		marginTop: "10px",
-	    		borderBottom: "1px dotted #22229C",
 	    		display: "inline-block"
 	    	},
-	    	'Спам...'
+	    	'Спам'
     	);
 
     	deleteAsSpamButton.onclick = function() {
