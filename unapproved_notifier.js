@@ -1,10 +1,14 @@
 // ==UserScript==
 // @name         unapprovedThreadPostNotifier
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
+// @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.js
+// @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.js
 // @description  Уведомляет модераторов/администраторов о темах/сообщениях на премодерации
 // @author       Vadim Moshev
 // @include      *programmersforum.ru*
+// @exclude      *programmersforum.ru/mo40/index.php
+// @exclude      *programmersforum.ru/showpost.php*
 // @grant        none
 // ==/UserScript==
 
