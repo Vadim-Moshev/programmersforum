@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Удалить как спам
-// @version      1.1
+// @version      1.2
 // @description  Позволяет удалять спамерские сообщения прямо со страницы темы
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
@@ -617,6 +617,7 @@
 	// является ли место размещения кнопки сообщением представителя администрации
     let tmp = document.querySelectorAll('div[id^="postmenu_"]');
     let postMenuArray = [];
+
     for (let i = 0; i < tmp.length; i++) {
     	if (/^postmenu_\d+$/.test( tmp[i].id )) {
     		// Определяем, принадлежит ли пост администратора/модератору
@@ -624,9 +625,15 @@
     		// то же самое для пользователей, у которых >=50 сообщений
 	    		let secondSmallfont = tmp[i].nextElementSibling.nextElementSibling;
 	    		let divsInLastSmallfont = tmp[i].parentNode.querySelectorAll('.smallfont:last-child div');
-	    		let divWithMsgAmount = (divsInLastSmallfont[1].textContent.indexOf('Сообщений') > 0) ?
-	    			divsInLastSmallfont[1] : divsInLastSmallfont[2];
-	    		let msgAmount = +(divWithMsgAmount.textContent.split(': ')[1].replace(',', ''));
+	    		// найдём РЕАЛЬНОЕ количество сообщений
+	    			let msgAmount;
+	    			for (let j = 0; j < divsInLastSmallfont.length; j++) {
+	    				let t = divsInLastSmallfont[j].textContent.trim();
+	    				if ( /^Сообщений: /.test( t ) ) {
+	    					msgAmount = +t.replace(/(^Сообщений: )|,/g, '');
+	    					break;
+	    				};
+	    			};	    		
 
 	    		if ( (secondSmallfont) && (/^.*(модератор|администратор).*$/i.test( secondSmallfont.innerHTML )) ) {
 	    			tmp[i].isAdministration = true;
@@ -641,9 +648,11 @@
 		    			tmp[i].userId = tmp[i].firstElementChild.href.split('=')[1];
 		    		//...имя пользователя
 		    			tmp[i].userName = tmp[i].firstElementChild.textContent;
+
 	    		};    		
     		postMenuArray.push(tmp[i]);
     	};
+
     };
 
   // Размещаем кнопку толкьо в тех сообщениях, которые принадлежат НЕ представителям администрации
