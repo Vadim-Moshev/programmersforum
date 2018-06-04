@@ -4,6 +4,8 @@
 // @version      1
 // @description  Позволяет вставлять готовые фрагменты ответа в сообщение
 // @author       Vadim Moshev
+// @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/ready_answers.user.js
+// @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/ready_answers.user.js
 // @include      *programmersforum.ru/showthread.php*
 // @include      *programmersforum.ru/newreply.php*
 // @include      *programmersforum.ru/editpost.php*
