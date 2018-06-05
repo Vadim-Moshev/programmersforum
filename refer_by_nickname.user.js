@@ -103,26 +103,40 @@
 				};
 
 			// размещаем кнопки и вешаем одновременно на них события по клику
+
 				for (i = 0; i < postsArray.length; i++) {
+					var divForButton = mkElem('div', null, {textAlign: 'center'});					
+
 					var button = mkElem(
-						'div',
-						null,
+						'span',
 						{
-							textAlign: 'center',
+							title: 'Нажмите, чтобы обратиться к пользователю по нику.'
+						},
+						{
 							fontWeight: 'bold',
 							color: '#22229C',
-							cursor: 'pointer'
+							cursor: 'pointer',
 						},
 						'[Ник]'
 					);
 					button.nickname = postsArray[i].querySelector('.bigusername').textContent;
 
+					divForButton.appendChild(button);
+
 					var postmenu = postsArray[i].querySelector('div[id^="postmenu_"]');
-					postmenu.parentNode.insertBefore(button, postmenu.nextElementSibling);
+					postmenu.parentNode.insertBefore(divForButton, postmenu.nextElementSibling);
 
 					button.onclick = function() {
 						textarea.focus();
-						insertAtCaret( areaId, '[b]' + this.nickname + '[/b], ' );
+						insertAtCaret( areaId, '[B]' + this.nickname + '[/B], ' );
+					};
+
+					button.onmouseover = function() {
+						this.style.color = 'red'
+					};
+
+					button.onmouseout = function() {
+						this.style.color = '#22229C'
 					};
 				};
 })();
