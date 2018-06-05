@@ -3,6 +3,8 @@
 // @namespace    http://tprogrammersforum.ru/
 // @version      1
 // @description  Позволяет обращаться к пользователемя по нику
+// @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/refer_by_nickname.user.js
+// @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/refer_by_nickname.user.js
 // @author       Vadim Moshev
 // @include      *programmersforum.ru/showthread.php*
 // @grant        none
