@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Обращение по нику
-// @namespace    http://tprogrammersforum.ru/
+// @namespace    http://programmersforum.ru/
 // @version      1
 // @description  Позволяет обращаться к пользователемя по нику
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/refer_by_nickname.user.js
