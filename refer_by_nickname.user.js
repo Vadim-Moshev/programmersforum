@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Обращение по нику
 // @namespace    http://programmersforum.ru/
-// @version      1
+// @version      1.1
 // @description  Позволяет обращаться к пользователемя по нику
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/refer_by_nickname.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/refer_by_nickname.user.js
@@ -41,39 +41,20 @@
 
     // ------------------------------------------------------------------------
 
-    function insertAtCaret(areaId, text) {
-		  var txtarea = getById(areaId);
-		  var scrollPos = txtarea.scrollTop;
-		  var strPos = 0;
-		  var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
-		            "ff" : (document.selection ? "ie" : false ) );
-		  if (br == "ie") {
-		      txtarea.focus();
-		      var range = document.selection.createRange();
-		      range.moveStart ('character', -txtarea.value.length);
-		      strPos = range.text.length;
-		  }
-		  else if (br == "ff") strPos = txtarea.selectionStart;
+    function scrollIntoMiddle(element) {
+        var elementRect = element.getBoundingClientRect();
+        var absoluteElementTop = elementRect.top + window.pageYOffset;
+        var height = elementRect.height ? elementRect.height : 100;
+        var middle = absoluteElementTop - (window.innerHeight / 2) + height / 2;
+        window.scrollTo(0, middle);
+    }
 
-		  var front = (txtarea.value).substring(0,strPos);
-		  var back = (txtarea.value).substring(strPos,txtarea.value.length);
-		  txtarea.value=front+text+back;
-		  strPos = strPos + text.length;
-		  if (br == "ie") {
-		      txtarea.focus();
-		      range = document.selection.createRange();
-		      range.moveStart ('character', -txtarea.value.length);
-		      range.moveStart ('character', strPos);
-		      range.moveEnd ('character', 0);
-		      range.select();
-		  }
-		  else if (br == "ff") {
-		      txtarea.selectionStart = strPos;
-		      txtarea.selectionEnd = strPos;
-		      txtarea.focus();
-		  }
-		  txtarea.scrollTop = scrollPos;
-};
+    function appendText(text) {
+        vB_Editor[QR_EditorID].insert_text(text);
+        vB_Editor[QR_EditorID].collapse_selection_end();
+
+        scrollIntoMiddle(vB_Editor[QR_EditorID].textobj);
+}
 
     // ------------------------------------------------------------------------
 
@@ -82,13 +63,10 @@
     	if (getById(REFER_BY_NICKNAME_ID)) {
     		return;
     	};
-
     	document.body.insertBefore(mkElem('div', {id: REFER_BY_NICKNAME_ID}), document.body.firstElementChild);
 
-    // Получим id текстового поля для сообщения и выйдем из скрипта, если такого поля нет
-    	var textarea = getById('vB_Editor_QR_textarea');
-			var areaId = 'vB_Editor_QR_textarea';
-			if (!textarea) {
+    // Выйдем из скрипта, если такого нет текстового поля
+			if (!getById('vB_Editor_QR_textarea')) {
 				return;
 			};
 
@@ -105,19 +83,19 @@
 			// размещаем кнопки и вешаем одновременно на них события по клику
 
 				for (i = 0; i < postsArray.length; i++) {
-					var divForButton = mkElem('div', null, {textAlign: 'center'});					
+					var divForButton = mkElem('div');					
 
 					var button = mkElem(
 						'span',
 						{
-							title: 'Нажмите, чтобы обратиться к пользователю по нику.'
+							title: 'Ник пользователя будет выделен жирным и вставлен в текстовое поле.'
 						},
 						{
 							fontWeight: 'bold',
-							color: '#22229C',
+							color: '#424242',
 							cursor: 'pointer',
 						},
-						'[Ник]'
+						'[Обратиться по нику]'
 					);
 					button.nickname = postsArray[i].querySelector('.bigusername').textContent;
 
@@ -127,8 +105,7 @@
 					postmenu.parentNode.insertBefore(divForButton, postmenu.nextElementSibling);
 
 					button.onclick = function() {
-						textarea.focus();
-						insertAtCaret( areaId, '[B]' + this.nickname + '[/B], ' );
+						appendText('[B]' + this.nickname + '[/B], ');
 					};
 
 					button.onmouseover = function() {
@@ -136,7 +113,7 @@
 					};
 
 					button.onmouseout = function() {
-						this.style.color = '#22229C'
+						this.style.color = '#424242'
 					};
 				};
 })();
