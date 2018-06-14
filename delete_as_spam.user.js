@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Удалить как спам
-// @version      1.2
+// @version      1.3
 // @description  Позволяет удалять спамерские сообщения прямо со страницы темы
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
@@ -85,11 +85,12 @@
 		  	);
 		  	deleteAsSpamPanelOverlay.appendChild(panel);
 
-		  	// Скрытые поля для ID темы, сообщения и пользователя, а также номера поста
+		  	// Скрытые поля для ID темы, сообщения и пользователя, а также номера поста и id кнопки
 		  		let threadIdHiddenField = mkElem('input', {type: 'hidden'});
 		  		let postIdHiddenField = mkElem('input', {type: 'hidden'});
 		  		let userIdHiddenField = mkElem('input', {type: 'hidden'});
 		  		let postNumberHiddenField = mkElem('input', {type: 'hidden'});
+		  		let buttonIdHiddenField = mkElem('input', {type: 'hidden'});
 
 		  	// Имя пользователя, к которому примяется наказание
 		  		let userNameBold = mkElem('b');
@@ -477,19 +478,8 @@
 												document.location = document.querySelector('span.navbar:last-child a').href;
 											} else {
 												// Сообщение не первое. Тогда его просто скрываем
-													for (let i = 0; i < postsArray.length; i++) {
-														let firstStrong = postsArray[i].querySelector('strong:first-child');
-														// У трупов сообщений нет ни одного стронга, таких пропускаем
-															if (!firstStrong) {
-																continue;
-															};
-
-														if (postNumber == firstStrong.textContent) {
-															postsArray[i].style.display = 'none';
-															postsArray[i].parentNode.style.padding = '0'; // чтобы зазор не оставался
-															break;
-														};
-													};
+													let currentPost = getById(buttonIdHiddenField.value);
+													currentPost.parentNode.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 											};
 
 										// Если пользователя баним, то везде меняем его статус на "заблокирован"
@@ -557,8 +547,7 @@
 																};
 
 										  				if (userNameBold.textContent == bigUsername.textContent) {
-										  					postsArray[i].style.display = 'none';
-										  					postsArray[i].parentNode.style.padding = '0'; // чтобы зазор не оставался
+										  					postsArray[i].parentNode.style.display = 'none';
 										  				};
 										  			};
 										  	};
@@ -584,7 +573,7 @@
 
   	// ------------------------------------------------------------------------		
 
-		function openPanel(aThreadId, aPostId, aUserId, aUserName, aPostNumber) {
+		function openPanel(aThreadId, aPostId, aUserId, aUserName, aPostNumber, aButtonId) {
 		  document.body.style.overflow = 'hidden';
 		  deleteAsSpamPanelOverlay.style.display = 'block';
 
@@ -592,6 +581,8 @@
 		  	userNameBold.textContent = aUserName;
 		  // ...и порядковый номер обрабатываемого поста
 		  	postNumberHiddenField.value = aPostNumber;
+		  // ...и порядковый номер нажатой кнопки
+		  	buttonIdHiddenField.value = aButtonId;
 
 		  // Сбросить состояние органов управления
 		  	checkboxRemoveOthers.checked = false;
@@ -608,7 +599,7 @@
 		  // ...и установить значения для ID темы, сообщения и пользователя
 		  	threadIdHiddenField.value = aThreadId;
 		  	postIdHiddenField.value = aPostId;
-		  	userIdHiddenField.value = aUserId;
+		  	userIdHiddenField.value = aUserId;		  	
 		};
 
     // ========================================================================
@@ -657,6 +648,7 @@
 
   // Размещаем кнопку толкьо в тех сообщениях, которые принадлежат НЕ представителям администрации
   // с количеством сообщений менее 50
+    let buttonNumber = 1;
     for (let i = 0; i < postMenuArray.length; i++) {
     	if (postMenuArray[i].isAdministration || postMenuArray[i].moreOrEqualThen50Msg) {
     		continue;
@@ -674,15 +666,24 @@
 	    	'Спам'
     	);
 
+    	// Порядковый номер кнопки "спам" нужен для сокрытия сообщения, находящегося на премодерации
+    	// если такое сообщение не первое в теме, но оно не имеет номера
+    	// порядковый номер кнопки позволит узнать, у какого сообщения была она нажата
+    	// порядковый номер участвует в формировании id кнопки
+	    	deleteAsSpamButton.id = 'deleteAsSpam_' + buttonNumber;
+	    	buttonNumber++;
+
     	deleteAsSpamButton.onclick = function() {
     		// Получим порядковый номер (в теме) обрабатываемого сообщения
-    			let postNumber = +this.parentNode.parentNode.parentNode.querySelector('td:nth-child(2) strong').textContent;
+    			let strong = this.parentNode.parentNode.parentNode.querySelector('td:nth-child(2) strong');
+    			let postNumber = strong ? +strong.textContent : 0;
     		openPanel(
     			postMenuArray[i].threadId,
     			postMenuArray[i].postId,
     			postMenuArray[i].userId,
     			postMenuArray[i].userName,
-    			postNumber
+    			postNumber,
+    			this.id
     		);
     	};
 
