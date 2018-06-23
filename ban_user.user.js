@@ -3,8 +3,8 @@
 // @namespace    http://programmersforum.ru/
 // @version      1
 // @description  Блокировка пользователя
-// @downloadURL  
-// @updateURL    
+// @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/ban_user.user.js
+// @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/ban_user.user.js
 // @author       Vadim Moshev
 // @include      *programmersforum.ru/showthread.php*
 // @grant        none
