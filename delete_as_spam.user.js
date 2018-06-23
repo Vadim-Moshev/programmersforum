@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Удалить как спам
-// @version      1.3
+// @version      1.4
 // @description  Позволяет удалять спамерские сообщения прямо со страницы темы
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
@@ -487,20 +487,25 @@
 												for (let i = 0; i < postsArray.length; i++) {
 													let bigUsername = postsArray[i].querySelector('a.bigusername');
 
-													// Пропустить трупы сообщений
-														if (!bigUsername) {
+													// Пропустить трупы сообщений и сообщения, не принаджежащие банимому пользователю
+														if (!bigUsername || bigUsername.textContent != userNameBold.textContent) {
 															continue
 														};
-
-													if (bigUsername.textContent != userNameBold.textContent) {
-														continue;
-													};
+													
 													let smallFontsPseudoArray = postsArray[i].querySelectorAll('.smallfont');
 													let serviceInfo = smallFontsPseudoArray[smallFontsPseudoArray.length - 2];
 													let smallFontsParent = serviceInfo.parentNode;
+													let childNumber = 1;
+
 													while (smallFontsParent.querySelectorAll('.smallfont').length > 1) {
-														smallFontsParent.removeChild(smallFontsParent.firstElementChild.nextSibling)
+														let tmp = smallFontsParent.children[childNumber];
+														if (tmp.className != 'smallfont') {
+															childNumber++
+														} else {
+															smallFontsParent.removeChild(smallFontsParent.children[childNumber]);
+														};
 													};
+
 													let bannedCaption = mkElem('div', null, null, 'Заблокирован');
 													bannedCaption.className = 'smallfont';
 													smallFontsParent.insertBefore( bannedCaption, serviceInfo );
