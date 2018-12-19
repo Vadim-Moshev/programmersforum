@@ -346,13 +346,13 @@
 
 					// плавно сожмём враппер по высоте до нуля, удалив атрибут style
 						setTimeout(
-							_ => {toggleScrollBars(true, 'X'); deletedPostElementWrapper.removeAttribute('style')},
+							_ => {deletedPostElementWrapper.removeAttribute('style')},
 							1000
 						);
 
 					// Удаления враппера элемента из DOM-дерева
 						setTimeout(
-							_ => {deleteElement(deletedPostElementWrapper)},
+							_ => {toggleScrollBars(true, 'X'); deleteElement(deletedPostElementWrapper)},
 							2000
 						);
 
