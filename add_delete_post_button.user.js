@@ -342,11 +342,11 @@
 					// Анимация удаления
 						toggleScrollBars(false, 'X');
 						deletedPostElement.className = ANIMATION_CLASSES_LIST.getRandomElement();
-						toggleScrollBars(true, 'X');
+						
 
 					// плавно сожмём враппер по высоте до нуля, удалив атрибут style
 						setTimeout(
-							_ => {deletedPostElementWrapper.removeAttribute('style')},
+							_ => {toggleScrollBars(true, 'X'); deletedPostElementWrapper.removeAttribute('style')},
 							1000
 						);
 
