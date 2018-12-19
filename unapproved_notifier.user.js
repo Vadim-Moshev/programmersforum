@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name         unapprovedThreadPostNotifier
-// @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.4
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.user.js
 // @description  Уведомляет модераторов/администраторов о темах/сообщениях на премодерации
@@ -15,6 +14,11 @@
 (function() {
     'use strict';
 
+    if (window.UNAPPROVED_MESSAGES_NOTIFIER) {
+      return;
+    };
+    window.UNAPPROVED_MESSAGES_NOTIFIER = true;
+
     function clWrite(m) {
     	console.log(m);
     };
@@ -27,16 +31,16 @@
     // aInnerText - не обязательный аргумент
     // Автор функции - Вадим Мошев
     function mkElem(aName, aAttributes, aCSSProps, aInnerText) {
-      var e = document.createElement(aName);
+      let e = document.createElement(aName);
 
       if (aAttributes) {
-        for (var attributeName in aAttributes) {
+        for (let attributeName in aAttributes) {
           e[attributeName] = aAttributes[attributeName];
         };
       };
 
       if (aCSSProps) {
-        for (var cssPropName in aCSSProps) {
+        for (let cssPropName in aCSSProps) {
           e.style[cssPropName] = aCSSProps[cssPropName];
         };
       };
@@ -50,7 +54,7 @@
 
     // ================================================================================
 
-    var notificationBlockCSSProps = {
+    let notificationBlockCSSProps = {
       display: 'none',
       padding: "5px",
       backgroundColor: "orange",
@@ -60,12 +64,13 @@
       border: "2px black groove"
     };
 
-    var notificationBlock = mkElem('div', null, notificationBlockCSSProps);
+    let notificationBlock = mkElem('div', null, notificationBlockCSSProps);
+    notificationBlock.id = 'UNAPPROVED_MESSAGES_NOTIFIER';
     document.body.appendChild(notificationBlock);
 
-    var serviceObjectsToSendArray = [
-    	{do:"viewthreads", type:"moderated", textForLink: "Темы на премодерации: "},
-    	{do:"viewposts", type:"moderated", textForLink: "Сообщения на премодерации: "}
+    let serviceObjectsToSendArray = [
+    	{do: "viewthreads", type: "moderated", textForLink: "Темы на премодерации: "},
+    	{do: "viewposts", type: "moderated", textForLink: "Сообщения на премодерации: "}
     ];
 
     serviceObjectsToSendArray.forEach(function(aObjectToSend) {
@@ -75,40 +80,40 @@
 	        return;
 	      };
 
-	      var amount = $(aData).find('#threadslist span.smallfont').text().match(/\d+/g)[0];
+	      let amount = $(aData).find('#threadslist span.smallfont').text().match(/\d+/g)[0];
 
 	      if (amount == 0) {
 	      	return;
 	      };
 
 	     	notificationBlock.style.display = 'block';
-	     	var textForLink = aObjectToSend.textForLink;
+	     	let textForLink = aObjectToSend.textForLink;
 	     	delete aObjectToSend.textForLink;
 
-	      var locationSearchParamsArray = [];
-  			for (var prop in aObjectToSend) {
+	      let locationSearchParamsArray = [];
+  			for (let prop in aObjectToSend) {
   				locationSearchParamsArray.push( prop + '=' + aObjectToSend[prop] );
   			};
-  			var hrefString = location.origin + '/moderation.php?' + locationSearchParamsArray.join('&');
+  			let hrefString = location.origin + '/moderation.php?' + locationSearchParamsArray.join('&');
 
-  			var notificationLinkAttributes = {
+  			let notificationLinkAttributes = {
 	      	href: hrefString,
 	      	target: "_blank"
 	    	};
 
-		    var notificationLinkCSSProps = {
+		    let notificationLinkCSSProps = {
 		      color: "#FFF",
 		      fontWeight: "bold",
 		      borderBottom: "1px #fff dotted"
 		    };
 
-		    var link = mkElem('a',
+		    let link = mkElem('a',
 		    	notificationLinkAttributes,
 		    	notificationLinkCSSProps,
 		    	textForLink + amount
 	    	);
 
-	    	var blockForLink = mkElem('div', null, null);
+	    	let blockForLink = mkElem('div', null, null);
 	    	blockForLink.appendChild(link);
 	    	notificationBlock.appendChild(blockForLink);
    		};
