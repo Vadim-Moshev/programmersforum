@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         unapprovedThreadPostNotifier
-// @version      1.4
+// @version      1.5
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.user.js
 // @description  Уведомляет модераторов/администраторов о темах/сообщениях на премодерации
@@ -65,7 +65,6 @@
     };
 
     let notificationBlock = mkElem('div', null, notificationBlockCSSProps);
-    notificationBlock.id = 'UNAPPROVED_MESSAGES_NOTIFIER';
     document.body.appendChild(notificationBlock);
 
     let serviceObjectsToSendArray = [
@@ -112,6 +111,12 @@
 		    	notificationLinkCSSProps,
 		    	textForLink + amount
 	    	);
+        // назначем айдишники именно таким образом, потому что порядок следования ссылок может быть любым
+          if ( /^Сообщения на премодерации/.test(link.textContent) ) {
+            link.id = 'LINK_TO_UNAPPROVED_POSTS';
+          } else {
+            link.id = 'LINK_TO_UNAPPROVED_THREADS';
+          };
 
 	    	let blockForLink = mkElem('div', null, null);
 	    	blockForLink.appendChild(link);
