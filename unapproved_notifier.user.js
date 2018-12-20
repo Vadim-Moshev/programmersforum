@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         unapprovedThreadPostNotifier
-// @version      1.5
+// @version      4
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/unapproved_notifier.user.js
 // @description  Уведомляет модераторов/администраторов о темах/сообщениях на премодерации
