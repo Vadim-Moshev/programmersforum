@@ -39,8 +39,6 @@
 				'linear-gradient(to right, #7D7D7D, #4A4A4A)'][STYLE_ID - 1];
 	const isApproved = APost => !APost.querySelector('img[src="images/misc/moderated.gif"]');
 	const isAlive = APost => !!APost.querySelector('a.bigusername');
-	const UNAPPROVED_MESSAGES_NOTIFIER_BLOCK = getById('UNAPPROVED_MESSAGES_NOTIFIER');
-
 
   // ========================================================================
 
@@ -58,8 +56,8 @@
 
   	let oldPaginatorsSet = PAGINATORS_SET;
 
-  // ========================================================================  
-  
+  // ========================================================================
+
   	Array.prototype.getRandomElement = function() {
   		let getRandomInt = (AMin, AMax) => Math.floor( Math.random()*(AMax - AMin + 1) ) + AMin;
   		return this[getRandomInt(0, this.length - 1)];
@@ -98,7 +96,7 @@
   };
 
   // ========================================================================
-  
+
   function isLastAlivePostOnPage(APost) {
   	let nextPost = APost.nextElementSibling;
   	while (nextPost.id != 'lastpost') {
@@ -131,7 +129,7 @@
   };
 
   // ========================================================================
-  
+
   function unicodeToWin1251_UrlEncoded(s) {
 	  // Функция найдена по адресу: https://toster.ru/q/323211
   	let DMap = {
@@ -227,7 +225,7 @@
 
         scrollIntoMiddle(vB_Editor[QR_EditorID].textobj);
 	    };
-			
+
 			$(APost).find('a:has(img[src*="quote."])').click( function(e) {
         e.preventDefault();
 
@@ -251,7 +249,7 @@
 	};
 
   // ========================================================================
-  
+
   // В эту функцию надо передавать Warpper поста, который начинается как <div align="center">
   function getPostId(APost) {
   	if (APost.tagName != 'DIV') {
@@ -300,23 +298,17 @@
 					if (+isUnapprovedHiddenField.value) {
 					// Интеграция со скриптом уведомления о непроверенных темах/сообщениях
 					// Уменьшим количество непроверенных сообщений на 1, если такая ссылка и вообще блок есть
-						if (UNAPPROVED_MESSAGES_NOTIFIER_BLOCK) {
-							let arr = UNAPPROVED_MESSAGES_NOTIFIER_BLOCK.querySelectorAll('a');
-							for (let i = 0; i < arr.length; i++) {
-								let p = arr[i];
-								let textContent = p.textContent;
-								if ( /^Сообщения на премодерации/.test(textContent) ) {
-									let number = +textContent.split(': ')[1];
-									if (number > 1) {
-										p.textContent = p.textContent.replace(/\d+$/, number - 1)
-									} else {
-										if (arr.length == 2) { // значит, у нас ещё есть ТЕМЫ на премодерации
-											deleteElement(p);
-										} else {
-											deleteElement(UNAPPROVED_MESSAGES_NOTIFIER_BLOCK);
-										};
-									};
-									break;
+						let t = getById('LINK_TO_UNAPPROVED_THREADS');
+						let p = getById('LINK_TO_UNAPPROVED_POSTS');
+						if (p) {
+							let number = +p.textContent.split(': ')[1];
+							if (number > 1) {
+								p.textContent = p.textContent.replace(/\d+$/, number - 1);
+							} else {
+								if (t) {
+									deleteElement(p)
+								} else {
+									deleteElement(p.parentNode.parentNode); // Удалить сам блок уведомлений
 								};
 							};
 						};
@@ -327,7 +319,7 @@
 
 					// И на его враппер, который будем сжимать
 						let deletedPostElementWrapper = deletedPostElement.parentNode;
-						
+
 					let deletedPostWasUnapproved = !isApproved(deletedPostElementWrapper);
 					let deletedPostWasLastOnPage = isLastAlivePostOnPage(deletedPostElementWrapper);
 					let nextToDeletedPost = deletedPostElementWrapper.nextElementSibling;
@@ -342,7 +334,6 @@
 					// Анимация удаления
 						toggleScrollBars(false, 'X');
 						deletedPostElement.className = ANIMATION_CLASSES_LIST.getRandomElement();
-						
 
 					// плавно сожмём враппер по высоте до нуля, удалив атрибут style
 						setTimeout(
@@ -679,7 +670,7 @@
 	  	deletingReasonsSelectFirstOption.selected = true;
 	  	deletingReasonTextField.value = '';
 		  loaderPicture.style.display = 'none';
-		
+
 		// Установить предупреждение, если это первый пост
 			let q = AIsFirstPost ? 'block' : 'none';
 		  firstPostWarning.style.display = q;
@@ -687,7 +678,7 @@
 	};
 
   // ========================================================================
-  
+
   // Добавим CSS стили на страницу для анимации удаления постов
   /*<переход> = [ none | <transition-property> ] || <transition-duration> ||
 	<transition-timing-function> || <transition-delay>*/
