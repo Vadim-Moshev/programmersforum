@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Готовые ответы
 // @namespace    http://programmersforum.ru/
-// @version      1.1
+// @version      1.2
 // @description  Позволяет вставлять готовые фрагменты ответа в сообщение
 // @author       Vadim Moshev
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/ready_answers.user.js
@@ -158,7 +158,11 @@
 		  				{
 		  					name: 'Если решили проблему, то покажите как вы это сделали',
 		  					value: 'Если вы решили проблему, то расскажите о том, как вы это сделали. Это будет полезно остальным.'
-		  					
+
+		  				},
+		  				{
+		  					name: 'Если фриланс-задача решена',
+		  					value: `[b]После того, как ваша задача будет решена или надобность в задаче отпадет, отпишитесь в своей теме, что задача больше не актуальна и/или направьте модератору раздела просьбу о закрытии вашей темы с той же формулировкой причины. Также же вы можете направить модератору просьбу о закрытии вашей посредством функции "Пожаловаться на сообщение", нажав на кнопку "Сообщить модератору" ([B][COLOR="Red"]/[/COLOR]|[COLOR="red"]\\[/COLOR][/B]) в левом нижнем углу своего сообщения.[/b]`
 		  				}
 		  			];
 		  		// наполним список
@@ -229,7 +233,7 @@
 
     function openPanel() {
     	readyAnswersPanelOverlay.style.display = 'block';
-		  document.body.style.overflow = 'hidden';    	
+		  document.body.style.overflow = 'hidden';
 
     	// Снять выделение со всего
     		let listOptions = readyAnswersList.children;
