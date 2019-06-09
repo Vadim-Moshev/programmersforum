@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Кнопка "Удалить сообщение"
-// @version      1
+// @version      1.1
 // @description  Добавляет кнопку удалить сообщение и соответствующий функционал
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
 // @author       Vadim Moshev
 // @include      *programmersforum.ru/showthread.php*
+// @require		   https://raw.githubusercontent.com/Vadim-Moshev/programmersforum/master/consts.js
 // ==/UserScript==
 
 (function() {
@@ -24,7 +25,7 @@
 			return;
 		};
 
-  const clWrite = msg => {console.log(msg)};
+	const clWrite = msg => {console.log(msg)};
 	const getById = id => document.getElementById(id);
 	const mkText = txt => document.createTextNode(txt);
 	const STYLE_ID = +document.querySelector('select[name="styleid"] option[selected]').value;
@@ -621,7 +622,7 @@
 	  		let loaderPicture = mkElem(
 	  			'img',
 	  			{
-	  				src: 'http://www.programmersforum.ru/images/misc/progress.gif',
+	  				src: Moshev_PFConsts.PATH_TO_LOADER_ICON,
 	  				width: '50'
 	  			},
 	  			{
