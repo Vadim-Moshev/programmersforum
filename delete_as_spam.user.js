@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Удалить как спам
-// @version      1.4
+// @version      1.41
 // @description  Позволяет удалять спамерские сообщения прямо со страницы темы
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/delete_as_spam.user.js
 // @author       Vadim Moshev
 // @include      *programmersforum.ru/showthread.php*
-// @grant        none
+// @require		   https://raw.githubusercontent.com/Vadim-Moshev/programmersforum/master/consts.js
 // ==/UserScript==
 
 (function() {
@@ -358,7 +358,7 @@
 		  		let loaderPicture = mkElem(
 		  			'img',
 		  			{
-		  				src: 'http://www.programmersforum.ru/images/misc/progress.gif',
+		  				src: Moshev_PFConsts.PATH_TO_LOADER_ICON,
 		  				width: '50'
 		  			},
 		  			{
