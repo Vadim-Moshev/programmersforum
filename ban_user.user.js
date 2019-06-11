@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name         Блокировка пользователя
-// @namespace    http://programmersforum.ru/
-// @version      1
-// @description  Блокировка пользователя
+// @version      1.1
+// @description  Блокировка пользователя без захода в админку
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/ban_user.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/ban_user.user.js
 // @author       Vadim Moshev
 // @include      *programmersforum.ru/showthread.php*
-// @grant        none
+// @require		   https://raw.githubusercontent.com/Vadim-Moshev/programmersforum/master/consts.js
 // ==/UserScript==
 
 (function() {
@@ -90,7 +89,7 @@
 		  		let loaderPicture = mkElem(
 		  			'img',
 		  			{
-		  				src: 'http://www.programmersforum.ru/images/misc/progress.gif',
+		  				src: Moshev_PFConsts.PATH_TO_LOADER_ICON,
 		  				width: '50'
 		  			},
 		  			{
