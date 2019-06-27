@@ -3,6 +3,8 @@
 // @namespace    https://programmersforum.ru/
 // @version      1
 // @description  try to take over the world!
+// @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/links_replacer.user.js
+// @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/links_replacer.user.js
 // @author       Vadim Moshev
 // @include      *programmersforum.ru/showthread.php*
 // @include      *programmersforum.ru/showpost.php*
