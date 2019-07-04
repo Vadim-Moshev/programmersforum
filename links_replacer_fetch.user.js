@@ -208,14 +208,13 @@
 				aLinkElement.removeAttribute('entityId');
 				let pageNumberCaption = page ? makePageNumberPart(page) : '';
 
-				let subject;
 				switch (path) {
 					case '/member.php': { // Форум программистов - Просмотр профиля: Пупунчик золотой
 						aLinkElement.textContent = title.replace('Форум программистов - Просмотр профиля: ', '');
 						return;
 					}
 					case '/showthread.php': { // С днем программиста! - Свободное общение - [Страница 2] - Форум программистов
-						subject = removeLastPartNTimes(title, page ? 3 : 2).trim();
+						let subject = removeLastPartNTimes(title, page ? 3 : 2).trim();
 						aLinkElement.textContent = subject + pageNumberCaption;
 						return;
 					}
@@ -226,7 +225,7 @@
 							setErrorMessageToLinkContent(aLinkElement);
 							return;
 						}
-						subject = title.substr(pos + strBeforeSubject.length).trim();
+						let subject = title.substr(pos + strBeforeSubject.length).trim();
 
 						//  получим порядковый номер сообщения в теме
 						if (postCount) {
