@@ -12,7 +12,7 @@
 // ==/UserScript==
 
 (function () {
-    // защита от aповторного запуска
+    // защита от повторного запуска
 	if (window.replaceLinksWithCaptions) {
 		return
 	}
