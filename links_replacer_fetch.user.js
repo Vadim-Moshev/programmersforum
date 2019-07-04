@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Замена ссылок их нахваниями через фетч
 // @namespace    https://programmersforum.ru/
-// @version      1.1
+// @version      1.2
 // @description  try to take over the world!
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/links_replacer_fetch.user.js
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/links_replacer_fetch.user.js
