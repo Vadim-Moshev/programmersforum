@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Замена ссылок их нахваниями через фетч
 // @namespace    https://programmersforum.ru/
-// @version      1
+// @version      1.1
 // @description  try to take over the world!
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/links_replacer_fetch.user.js
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/links_replacer_fetch.user.js
@@ -108,7 +108,7 @@
 
 	const makePageNumberPart = (aPage) => makeTitlePart('Страница', aPage);
 
-// ===============================================================================
+// --------------------------------------------------------------------------------
 
 	function queryStringToHash(aQueryString) {
 		let result = {};
@@ -121,13 +121,6 @@
 
 		return result;
 	}
-// --------------------------------------------------------------------------------
-
-	const setErrorMessageToLinkContent = aLink => {
-		aLink.textContent = '[Содержимое ссылки недоспутно]';
-		aLink.style.color = 'red';
-	};
-
 // --------------------------------------------------------------------------------
 
 	let linksInPosts = Array.prototype.slice.apply(getBySelectorAll('div[id^="post_message_"] a'));
@@ -196,7 +189,6 @@
 
 				// Пропускаем недоступные ссылки (например, удалённые темы {у них титл === 'Форум программистов'})
 				if (!title || title.indexOf(' - ') === -1) {
-					setErrorMessageToLinkContent(aLinkElement);
 					return;
 				}
 				let urlParts = parseURL(currentLinkHref);
@@ -222,7 +214,6 @@
 						let strBeforeSubject = 'Показать сообщение отдельно - '; // В оригинале в конце пробела не было
 						let pos = title.indexOf(strBeforeSubject);
 						if (pos === -1) {
-							setErrorMessageToLinkContent(aLinkElement);
 							return;
 						}
 						let subject = title.substr(pos + strBeforeSubject.length).trim();
