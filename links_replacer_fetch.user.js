@@ -11,8 +11,8 @@
 // @include      *programmersforum.ru/private.php*
 // ==/UserScript==
 
-(function() {
-// защита от aповторного запуска
+(function () {
+    // защита от aповторного запуска
 	if (window.replaceLinksWithCaptions) {
 		return
 	}
@@ -131,8 +131,8 @@
 
 // --------------------------------------------------------------------------------
 
-	let linksInPosts = Array.prototype.slice.apply( getBySelectorAll('div[id^="post_message_"] a'));
-	let linksToChangeTitle =linksInPosts
+	let linksInPosts = Array.prototype.slice.apply(getBySelectorAll('div[id^="post_message_"] a'));
+	let linksToChangeTitle = linksInPosts
 		.filter(aLinkElement => {
 			let url = aLinkElement.href;
 			let linkCurrentTitle = aLinkElement.textContent.trim();
@@ -159,10 +159,10 @@
 			// запрос или нужная пара ключ-значение не существует
 			let idKey = PATH_ID_MAP[path];
 			let queryParts = queryStringToHash(query);
-			if (!idKey.some( aIdKey => !!queryParts[aIdKey] )) {
+			if (!idKey.some(aIdKey => !!queryParts[aIdKey])) {
 				return false;
 			}
-			let id = queryParts[idKey.filter( aIdKey => !!queryParts[aIdKey] )[0]];
+			let id = queryParts[idKey.filter(aIdKey => !!queryParts[aIdKey])[0]];
 			if (!id) {
 				return false; // без id всё не имеет смысла
 			}
@@ -186,7 +186,7 @@
 			.replace(/https?:\/\/(www\.)?programmersforum\.ru/, '');
 
 		fetch(currentLinkHref, options)
-			.then(aResponse => aResponse.arrayBuffer() )
+			.then(aResponse => aResponse.arrayBuffer())
 			.then(aBuffer => {
 				let decoder = new TextDecoder(TEXT_ENCODING);
 				let text = decoder.decode(aBuffer);
