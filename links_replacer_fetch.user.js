@@ -12,10 +12,10 @@
 // ==/UserScript==
 
 (function() {
-// защита от повторного запуска
-  if (window.replaceLinksWithCaptions) {
-  	return
-  }
+// защита от aповторного запуска
+	if (window.replaceLinksWithCaptions) {
+		return
+	}
 	window.replaceLinksWithCaptions = true;
 
 // ===============================================================================
@@ -29,44 +29,44 @@
 			'/forumdisplay.php' : ['f'],
 			'/member.php'       : ['u']
 		};
-		// REQUEST_HOST = 'localhost';
+	// REQUEST_HOST = 'localhost';
 
 // --------------------------------------------------------------------------------
 
-  function HTMLTextToDOM(aHTMLText) {
-    let container = document.createElement('div');
-    container.insertAdjacentHTML('afterBegin', aHTMLText);
-    return container;
-  }
+	function HTMLTextToDOM(aHTMLText) {
+		let container = document.createElement('div');
+		container.insertAdjacentHTML('afterBegin', aHTMLText);
+		return container;
+	}
 // --------------------------------------------------------------------------------
 
-function parseURL(aURL) {
-  // Автор функции Alex P (Alex11223)
-  // https://github.com/AlexP11223/ProgForumRuUserscripts/blob/master/non-user-js/video_embed.js
+	function parseURL(aURL) {
+		// Автор функции Alex P (Alex11223)
+		// https://github.com/AlexP11223/ProgForumRuUserscripts/blob/master/non-user-js/video_embed.js
 
-  let parser = document.createElement('a');
-  let searchDict = {};
+		let parser = document.createElement('a');
+		let searchDict = {};
 
-  parser.href = aURL;
+		parser.href = aURL;
 
-  let queries = parser.search.replace(/^\?/, '').split('&');
-  for (let i = 0; i < queries.length; i++) {
-    let parts = queries[i].split('=');
-    searchDict[parts[0]] = parts[1];
-  }
+		let queries = parser.search.replace(/^\?/, '').split('&');
+		for (let i = 0; i < queries.length; i++) {
+			let parts = queries[i].split('=');
+			searchDict[parts[0]] = parts[1];
+		}
 
-  return {
-    protocol: parser.protocol,
-    host: parser.host,
-    hostname: parser.hostname,
-    port: parser.port,
-    pathname: parser.pathname,
-    search: parser.search,
-    hash: parser.hash,
-    searchDict: searchDict,
-    pathParts: parser.pathname.substring(1).split('/')
-  };
-}
+		return {
+			protocol: parser.protocol,
+			host: parser.host,
+			hostname: parser.hostname,
+			port: parser.port,
+			pathname: parser.pathname,
+			search: parser.search,
+			hash: parser.hash,
+			searchDict: searchDict,
+			pathParts: parser.pathname.substring(1).split('/')
+		};
+	}
 // --------------------------------------------------------------------------------
 
 	function getPageTitle(aServerResponse) {
@@ -81,102 +81,102 @@ function parseURL(aURL) {
 	}
 // --------------------------------------------------------------------------------
 
-function removeLastPart(aStr, aSeparator = '-') {
-	let separatorLastIndex = aStr.lastIndexOf(aSeparator);
-	return (separatorLastIndex > -1) ? aStr.substring(0, separatorLastIndex) : aStr;
-}
-// --------------------------------------------------------------------------------
-
-function removeLastPartNTimes(aStr, aTimes, aSeparator = '-') {
-	for (let i = 1; i <= aTimes; i++) {
-		aStr = removeLastPart(aStr, aSeparator);
+	function removeLastPart(aStr, aSeparator = '-') {
+		let separatorLastIndex = aStr.lastIndexOf(aSeparator);
+		return (separatorLastIndex > -1) ? aStr.substring(0, separatorLastIndex) : aStr;
 	}
-	return aStr;
-}
 // --------------------------------------------------------------------------------
 
-const makeTitlePart = (aName, aValue) => (!aValue) ? '' : ` - ${aName} ${aValue}`;
+	function removeLastPartNTimes(aStr, aTimes, aSeparator = '-') {
+		for (let i = 1; i <= aTimes; i++) {
+			aStr = removeLastPart(aStr, aSeparator);
+		}
+		return aStr;
+	}
+// --------------------------------------------------------------------------------
+
+	const makeTitlePart = (aName, aValue) => (!aValue) ? '' : ` - ${aName} ${aValue}`;
 
 // --------------------------------------------------------------------------------
 
-const getBySelector = aSelector => document.querySelector(aSelector);
+	const getBySelector = aSelector => document.querySelector(aSelector);
 
 // --------------------------------------------------------------------------------
 
-const getBySelectorAll = aSelector => document.querySelectorAll(aSelector);
+	const getBySelectorAll = aSelector => document.querySelectorAll(aSelector);
 
 // --------------------------------------------------------------------------------
 
-const makePageNumberPart = (aPage) => makeTitlePart('Страница', aPage);
+	const makePageNumberPart = (aPage) => makeTitlePart('Страница', aPage);
 
 // ===============================================================================
 
-function queryStringToHash(aQueryString) {
-	let result = {};
+	function queryStringToHash(aQueryString) {
+		let result = {};
 
-	let keyValuePairs = aQueryString.split('&');
-	keyValuePairs.forEach(aPair => {
-		let [key, value] = aPair.split('=');
-		result[key] = value;
-	});
+		let keyValuePairs = aQueryString.split('&');
+		keyValuePairs.forEach(aPair => {
+			let [key, value] = aPair.split('=');
+			result[key] = value;
+		});
 
-	return result;
-}
+		return result;
+	}
 // --------------------------------------------------------------------------------
 
-const setErrorMessageToLinkContent = aLink => {
-	aLink.textContent = '[Содержимое ссылки недоспутно]';
-	aLink.style.color = 'red';
-};
+	const setErrorMessageToLinkContent = aLink => {
+		aLink.textContent = '[Содержимое ссылки недоспутно]';
+		aLink.style.color = 'red';
+	};
 
 // --------------------------------------------------------------------------------
 
-let linksInPosts = Array.prototype.slice.apply( getBySelectorAll('div[id^="post_message_"] a'));
-let linksToChangeTitle =linksInPosts
-	.filter(aLinkElement => {
-		let url = aLinkElement.href;
-		let linkCurrentTitle = aLinkElement.textContent.trim();
-		let urlParts = parseURL(url);
+	let linksInPosts = Array.prototype.slice.apply( getBySelectorAll('div[id^="post_message_"] a'));
+	let linksToChangeTitle =linksInPosts
+		.filter(aLinkElement => {
+			let url = aLinkElement.href;
+			let linkCurrentTitle = aLinkElement.textContent.trim();
+			let urlParts = parseURL(url);
 
-		let host = urlParts.host;
-		let path = urlParts.pathname;
-		let query = urlParts.search.replace('?', '');
+			let host = urlParts.host;
+			let path = urlParts.pathname;
+			let query = urlParts.search.replace('?', '');
 
-		// Если Ссылка содержит изображения, то исключаем её
+			// Если Ссылка содержит изображения, то исключаем её
 			if (aLinkElement.querySelectorAll('img').length) {
 				return false;
 			}
-		// проверка ссылки на именованность (текст ссылки отличается от её href)
-		// будем считать внутреннюю ссылку именованной, если она не содержит домена нашего форума
-		// именованные ссылки исключаем
+			// проверка ссылки на именованность (текст ссылки отличается от её href)
+			// будем считать внутреннюю ссылку именованной, если она не содержит домена нашего форума
+			// именованные ссылки исключаем
 			if (linkCurrentTitle.toLowerCase().indexOf(FORUM_DOMAIN) === -1) {
 				return false
 			}
-		// внешние ссылки, строки без запросов или на неинтересующие нас скрипты исключаем
+			// внешние ссылки, строки без запросов или на неинтересующие нас скрипты исключаем
 			if (url.indexOf(FORUM_DOMAIN) === -1 || !(path in PATH_ID_MAP) || !query) {
 				return false;
 			}
-		// запрос или нужная пара ключ-значение не существует
+			// запрос или нужная пара ключ-значение не существует
 			let idKey = PATH_ID_MAP[path];
 			let queryParts = queryStringToHash(query);
 			if (!idKey.some( aIdKey => !!queryParts[aIdKey] )) {
 				return false;
 			}
-		let id = queryParts[idKey.filter( aIdKey => !!queryParts[aIdKey] )[0]];
-		if (!id) {
-			return false; // без id всё не имеет смысла
-		}
-		let page = queryParts.page || 0;
+			let id = queryParts[idKey.filter( aIdKey => !!queryParts[aIdKey] )[0]];
+			if (!id) {
+				return false; // без id всё не имеет смысла
+			}
+			let page = queryParts.page || 0;
 
-		aLinkElement.setAttribute('entityId', id);
-		aLinkElement.setAttribute('page', page);
+			aLinkElement.setAttribute('entityId', id);
+			aLinkElement.setAttribute('page', page);
 
-		return true;
-	});
+			return true;
+		});
 
 	linksToChangeTitle.forEach(aLinkElement => {
 		let options = {
-		  credentials: 'omit'
+			credentials: 'omit'
 		};
 
 		// удалим протокол и www, чтобы не было кросдоменных запросов с загрузок с небезопасных мест
@@ -186,76 +186,76 @@ let linksToChangeTitle =linksInPosts
 			.replace(/https?:\/\/(www\.)?programmersforum\.ru/, '');
 
 		fetch(currentLinkHref, options)
-		  .then(aResponse => aResponse.arrayBuffer() )
-		  .then(aBuffer => {
-		    let decoder = new TextDecoder(TEXT_ENCODING);
-		    let text = decoder.decode(aBuffer);
-		    return text;
-		  })
-		  .then(aResponseText => {
-		  	let title = getPageTitle(aResponseText);
+			.then(aResponse => aResponse.arrayBuffer() )
+			.then(aBuffer => {
+				let decoder = new TextDecoder(TEXT_ENCODING);
+				let text = decoder.decode(aBuffer);
+				return text;
+			})
+			.then(aResponseText => {
+				let title = getPageTitle(aResponseText);
 
-		  	// Пропускаем недоступные ссылки (например, удалённые темы {у них титл === 'Форум программистов'})
-			  	if (!title || title.indexOf(' - ') === -1) {
-			  		setErrorMessageToLinkContent(aLinkElement);
-			  		return;
+				// Пропускаем недоступные ссылки (например, удалённые темы {у них титл === 'Форум программистов'})
+				if (!title || title.indexOf(' - ') === -1) {
+					setErrorMessageToLinkContent(aLinkElement);
+					return;
 				}
-			  let urlParts = parseURL(currentLinkHref);
+				let urlParts = parseURL(currentLinkHref);
 				let path = urlParts.pathname;
 				let postCount = queryStringToHash(urlParts.search).postcount;
-		  	let page = +aLinkElement.getAttribute('page');
-		  	let id = aLinkElement.getAttribute('entityId');
-		  	aLinkElement.removeAttribute('page');
-		  	aLinkElement.removeAttribute('entityId');
+				let page = +aLinkElement.getAttribute('page');
+				let id = aLinkElement.getAttribute('entityId');
+				aLinkElement.removeAttribute('page');
+				aLinkElement.removeAttribute('entityId');
 				let pageNumberCaption = page ? makePageNumberPart(page) : '';
 
 				let subject;
-		  	switch (path) {
-		  		case '/member.php': { // Форум программистов - Просмотр профиля: Пупунчик золотой
-		  			aLinkElement.textContent = title.replace('Форум программистов - Просмотр профиля: ', '');
-		  			return;
-				}
-				case '/showthread.php': { // С днем программиста! - Свободное общение - [Страница 2] - Форум программистов
-		  			subject = removeLastPartNTimes(title, page ? 3 : 2).trim();
-		  			aLinkElement.textContent = subject + pageNumberCaption;
-		  			return;
-				}
-				case '/showpost.php': { // Свободное общение - Показать сообщение отдельно -  С днем программиста!
-		  			let strBeforeSubject = 'Показать сообщение отдельно - '; // В оригинале в конце пробела не было
-		  			let pos = title.indexOf(strBeforeSubject);
-		  			if (pos === -1) {
-		  				setErrorMessageToLinkContent(aLinkElement);
-		  				return;
+				switch (path) {
+					case '/member.php': { // Форум программистов - Просмотр профиля: Пупунчик золотой
+						aLinkElement.textContent = title.replace('Форум программистов - Просмотр профиля: ', '');
+						return;
 					}
-					subject = title.substr(pos + strBeforeSubject.length).trim();
+					case '/showthread.php': { // С днем программиста! - Свободное общение - [Страница 2] - Форум программистов
+						subject = removeLastPartNTimes(title, page ? 3 : 2).trim();
+						aLinkElement.textContent = subject + pageNumberCaption;
+						return;
+					}
+					case '/showpost.php': { // Свободное общение - Показать сообщение отдельно -  С днем программиста!
+						let strBeforeSubject = 'Показать сообщение отдельно - '; // В оригинале в конце пробела не было
+						let pos = title.indexOf(strBeforeSubject);
+						if (pos === -1) {
+							setErrorMessageToLinkContent(aLinkElement);
+							return;
+						}
+						subject = title.substr(pos + strBeforeSubject.length).trim();
 
 						//  получим порядковый номер сообщения в теме
-							if (postCount) {
-								aLinkElement.textContent = subject + makeTitlePart('Сообщение', postCount);
-							} else {
-								let threadMessageURL = `showthread.php?p=${id}#post${id}`;
-								fetch(threadMessageURL, options)
-									.then(aResponse => aResponse.arrayBuffer())
-									.then(aBuffer => {
-										let decoder = new TextDecoder(TEXT_ENCODING);
-										return decoder.decode(aBuffer);
-									})
-									.then(aResponseText => {
-										postCount = HTMLTextToDOM(aResponseText)
-											.querySelector(`#postcount${id}`)
-											.name;
+						if (postCount) {
+							aLinkElement.textContent = subject + makeTitlePart('Сообщение', postCount);
+						} else {
+							let threadMessageURL = `showthread.php?p=${id}#post${id}`;
+							fetch(threadMessageURL, options)
+								.then(aResponse => aResponse.arrayBuffer())
+								.then(aBuffer => {
+									let decoder = new TextDecoder(TEXT_ENCODING);
+									return decoder.decode(aBuffer);
+								})
+								.then(aResponseText => {
+									postCount = HTMLTextToDOM(aResponseText)
+										.querySelector(`#postcount${id}`)
+										.name;
 
-										aLinkElement.textContent = subject + makeTitlePart('Сообщение', postCount);
-									})
-							}
-					return;
-				}
-				case '/forumdisplay.php': { // Свободное общение - [Страница 2] - Форум программистов
+									aLinkElement.textContent = subject + makeTitlePart('Сообщение', postCount);
+								})
+						}
+						return;
+					}
+					case '/forumdisplay.php': { // Свободное общение - [Страница 2] - Форум программистов
 						let unitName = (removeLastPart(title)).trim();
 						aLinkElement.textContent = unitName;
 						return;
 					}
-			}
-		  });
+				}
+			});
 	});
 })();
