@@ -15,8 +15,8 @@
 // защита от повторного запуска
   if (window.replaceLinksWithCaptions) {
   	return
-  };
-  window.replaceLinksWithCaptions = true;
+  }
+	window.replaceLinksWithCaptions = true;
 
 // ===============================================================================
 
@@ -37,8 +37,7 @@
     let container = document.createElement('div');
     container.insertAdjacentHTML('afterBegin', aHTMLText);
     return container;
-  };
-
+  }
 // --------------------------------------------------------------------------------
 
 function parseURL(aURL) {
@@ -67,39 +66,33 @@ function parseURL(aURL) {
     searchDict: searchDict,
     pathParts: parser.pathname.substring(1).split('/')
   };
-};
-
+}
 // --------------------------------------------------------------------------------
 
 	function getPageTitle(aServerResponse) {
 		let searchResult = aServerResponse.match(/<title>(.*)<\/title>/i);
 		if (!searchResult) {
 			return null;
-		};
-
+		}
 		let pageTitle = searchResult[1];
 
 		// remove EOLs and excessive whitespaces
 		return pageTitle.replace(/\s+/g, ' ').trim();
-	};
-
+	}
 // --------------------------------------------------------------------------------
 
 function removeLastPart(aStr, aSeparator = '-') {
 	let separatorLastIndex = aStr.lastIndexOf(aSeparator);
 	return (separatorLastIndex > -1) ? aStr.substring(0, separatorLastIndex) : aStr;
-};
-
+}
 // --------------------------------------------------------------------------------
 
 function removeLastPartNTimes(aStr, aTimes, aSeparator = '-') {
 	for (let i = 1; i <= aTimes; i++) {
 		aStr = removeLastPart(aStr, aSeparator);
-	};
-
+	}
 	return aStr;
-};
-
+}
 // --------------------------------------------------------------------------------
 
 const makeTitlePart = (aName, aValue) => (!aValue) ? '' : ` - ${aName} ${aValue}`;
@@ -128,8 +121,7 @@ function queryStringToHash(aQueryString) {
 	});
 
 	return result;
-};
-
+}
 // --------------------------------------------------------------------------------
 
 const setErrorMessageToLinkContent = aLink => {
@@ -153,32 +145,27 @@ let linksToChangeTitle =linksInPosts
 		// Если Ссылка содержит изображения, то исключаем её
 			if (aLinkElement.querySelectorAll('img').length) {
 				return false;
-			};
-
+			}
 		// проверка ссылки на именованность (текст ссылки отличается от её href)
 		// будем считать внутреннюю ссылку именованной, если она не содержит домена нашего форума
 		// именованные ссылки исключаем
 			if (linkCurrentTitle.toLowerCase().indexOf(FORUM_DOMAIN) === -1) {
 				return false
-			};
-
+			}
 		// внешние ссылки, строки без запросов или на неинтересующие нас скрипты исключаем
 			if (url.indexOf(FORUM_DOMAIN) === -1 || !(path in PATH_ID_MAP) || !query) {
 				return false;
-			};
-
+			}
 		// запрос или нужная пара ключ-значение не существует
 			let idKey = PATH_ID_MAP[path];
 			let queryParts = queryStringToHash(query);
 			if (!idKey.some( aIdKey => !!queryParts[aIdKey] )) {
 				return false;
-			};
-
+			}
 		let id = queryParts[idKey.filter( aIdKey => !!queryParts[aIdKey] )[0]];
 		if (!id) {
 			return false; // без id всё не имеет смысла
-		};
-
+		}
 		let page = queryParts.page || 0;
 
 		aLinkElement.setAttribute('entityId', id);
@@ -212,9 +199,8 @@ let linksToChangeTitle =linksInPosts
 			  	if (!title || title.indexOf(' - ') === -1) {
 			  		setErrorMessageToLinkContent(aLinkElement);
 			  		return;
-			  	};
-
-				let urlParts = parseURL(currentLinkHref);
+				}
+			  let urlParts = parseURL(currentLinkHref);
 				let path = urlParts.pathname;
 				let postCount = queryStringToHash(urlParts.search).postcount;
 		  	let page = +aLinkElement.getAttribute('page');
@@ -228,23 +214,20 @@ let linksToChangeTitle =linksInPosts
 		  		case '/member.php': { // Форум программистов - Просмотр профиля: Пупунчик золотой
 		  			aLinkElement.textContent = title.replace('Форум программистов - Просмотр профиля: ', '');
 		  			return;
-		  		};
-
-		  		case '/showthread.php': { // С днем программиста! - Свободное общение - [Страница 2] - Форум программистов
+				}
+				case '/showthread.php': { // С днем программиста! - Свободное общение - [Страница 2] - Форум программистов
 		  			subject = removeLastPartNTimes(title, page ? 3 : 2).trim();
 		  			aLinkElement.textContent = subject + pageNumberCaption;
 		  			return;
-		  		};
-
-		  		case '/showpost.php': { // Свободное общение - Показать сообщение отдельно -  С днем программиста!
+				}
+				case '/showpost.php': { // Свободное общение - Показать сообщение отдельно -  С днем программиста!
 		  			let strBeforeSubject = 'Показать сообщение отдельно - '; // В оригинале в конце пробела не было
 		  			let pos = title.indexOf(strBeforeSubject);
 		  			if (pos === -1) {
 		  				setErrorMessageToLinkContent(aLinkElement);
 		  				return;
-		  			};
-
-						subject = title.substr(pos + strBeforeSubject.length).trim();
+					}
+					subject = title.substr(pos + strBeforeSubject.length).trim();
 
 						//  получим порядковый номер сообщения в теме
 							if (postCount) {
@@ -264,17 +247,15 @@ let linksToChangeTitle =linksInPosts
 
 										aLinkElement.textContent = subject + makeTitlePart('Сообщение', postCount);
 									})
-							};
-
-						return;
-					};
-
-					case '/forumdisplay.php': { // Свободное общение - [Страница 2] - Форум программистов
+							}
+					return;
+				}
+				case '/forumdisplay.php': { // Свободное общение - [Страница 2] - Форум программистов
 						let unitName = (removeLastPart(title)).trim();
 						aLinkElement.textContent = unitName;
 						return;
-					};
-		  	};
+					}
+			}
 		  });
 	});
 })();
