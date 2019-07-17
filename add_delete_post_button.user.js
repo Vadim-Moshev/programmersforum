@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Кнопка "Удалить сообщение"
-// @version      1.1
+// @version      1.2
 // @description  Добавляет кнопку удалить сообщение и соответствующий функционал
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
@@ -188,7 +188,7 @@
 				backgroundImage : BUTTON_BACKGROUND_GRADIENT,
 				cursor 					: 'pointer',
 				fontWeight 			: 'bold',
-				fontFamily 			: 'helvetica',
+				fontFamily 			: 'Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif',
 				padding 				: '3px 10px',
 				position 				: 'relative',
 				top 						: '-4px'
