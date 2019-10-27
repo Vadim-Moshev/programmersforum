@@ -15,7 +15,7 @@
   // Защита от повторного запуска
   if ( document.getElementById(RENAME_PANEL_ID) ) {
     return;
-  };
+  }
 
   var STYLE_ID = $('select[name="styleid"]:has(optgroup[label="Выбор стиля"])')[0].value;
   var MAX_DEFAULT_THREADNAME_LENGTH = 180; // Как в настройках форума
@@ -40,11 +40,10 @@
   function getCharactersLimit (textField) {
     // функция вернёт количество символов, к-рое ещё можно ввести в это поле
     return (textField.maxLength - textField.value.length);
-  };
-
+  }
   // ================================================================
 
-  function createServiceTagsList(optionsList, firstOptionCaption, id) {;
+  function createServiceTagsList(optionsList, firstOptionCaption, id) {
     var select = document.createElement('select');
     select.size = 1;
     select.id = id;
@@ -59,10 +58,10 @@
       tmpOpt.innerHTML = optionsList[i].name;
       tmpOpt.value = optionsList[i].value;
       select.appendChild(tmpOpt);
-    };
+    }
 
     return select;
-  };
+  }
 
   // ================================================================
 
@@ -71,10 +70,9 @@
     var sum = 0;
     for (var i = 0; i < aSelectsArray.length; i++) {
       sum += aSelectsArray[i].value.length;
-    };
+    }
     return sum;
-  };
-
+  }
   // ================================================================
 
   function getMaxLegthForTextField(checkbox, selectsArray) {
@@ -84,13 +82,13 @@
     if (checkbox.checked) {
       maxLength -= checkbox.value.length;
       serviceTagsInUse = true;
-    };
+    }
 
     var selectsValuesTotalLength = getValuesTotalLength(selectsArray);
     serviceTagsInUse = serviceTagsInUse || !!selectsValuesTotalLength;
 
     return maxLength - selectsValuesTotalLength - serviceTagsInUse;
-  };
+  }
 
   // ================================================================
 
@@ -185,8 +183,8 @@
         value = value.replace(tmpRexExp, '');
         valueForServTagsHiddenField += languagesLists[i].value;
         break;
-      };
-    };
+      }
+    }
 
     // необходимо деактивировать галочку, если суммарная длина меток из списков с пробелом-разделителем
     // превышают значение галочки "решено". Всё это делать только тогда, когда галочка НЕ СТОИТ
@@ -194,9 +192,7 @@
       var thereAreNoServiceTags = !getValuesTotalLength(dropListsArray);
       troubleIsShootedCheckbox.disabled = (MAX_DEFAULT_THREADNAME_LENGTH - threadTitleWithTags.length <
         troubleIsShootedCheckbox.value.length + thereAreNoServiceTags);
-    };
-
-
+    }
     serviceTagsFromSelectsHidden.value = valueForServTagsHiddenField;
 
     // Иконка прогресса
@@ -267,8 +263,7 @@
   // иначе (STYLE_ID == 1), это - дефолтная тема, синяя, тогда цвет ячейки - по дефолту
   if (STYLE_ID == 2) {
     cellForRenamePanel.style.backgroundColor = '#D4D0C8';
-  };
-
+  }
   cellForRenamePanel.appendChild( createRenamePanel(currentThreadTitle) );
 
   var rowForCell = document.createElement('tr');
@@ -303,7 +298,7 @@
     } else {
       serviceTagTroubleShooted =
         troubleIsShootedCheckbox.checked ? troubleIsShootedCheckbox.value : '';
-    };
+    }
 
     var serviceTagsFromSelects = '';
     var serviceTagsFromSelectsHidden = document.getElementById('serviceTagsFromSelectsHidden');
@@ -312,13 +307,13 @@
     } else {
       for (var i = 0; i < selectsArray.length; i++) {
         serviceTagsFromSelects += selectsArray[i].value;
-      };
-    };
+      }
+    }
 
     var allServiceTagsInString = serviceTagTroubleShooted + serviceTagsFromSelects;
     if (allServiceTagsInString) {
       allServiceTagsInString += ' ';
-    };
+    }
     var threadTitleWithTags = allServiceTagsInString + threadTitle;
 
     var lastArgument = SESSIONURL
@@ -345,8 +340,7 @@
           // Если мы на первой страницы темы, то поменять и заголовок первого сообщения
           if ( !/Страница \d+/.test( siteNamePageNumberString ) ) {
             firstMessageHeader.textContent = threadTitleWithTags;
-          };
-
+          }
           document.getElementById('renamePanelTextField').blur();
           lastSuccesThreadTitleField.value = threadTitle;
           troubleIsShootedHidden.value = serviceTagTroubleShooted;
@@ -400,11 +394,9 @@
       сharactersCounter.innerHTML = getCharactersLimit(textField);
     } else {
       renameThread(threadTitle, null, null);
-    };
-
+    }
     return false;
-  };
-
+  }
   // Обновить состояние счётчика при вводе или вставке символов
   // и установить доступность/недоступность галочки, но не деативировтаь её, если она установлена
   textField.oninput = function () {
@@ -420,7 +412,7 @@
       var thereAreNoServiceTags = !getValuesTotalLength(selects);
       troubleIsShootedCheckbox.disabled =
         (charsLimit < troubleIsShootedCheckbox.value.length + thereAreNoServiceTags);
-    };
+    }
   };
 
   // =========================================================
@@ -439,7 +431,7 @@
     if (event.keyCode == 13) {
       tryToRenameThread(this);
       return false;
-    };
+    }
   };
 
   // =========================================================
@@ -483,25 +475,22 @@
           this.value = this.previousValue;
         } else {
           this.querySelector('option').selected = true;
-        };
-
+        }
         return;
-      };
-
+      }
       if (!troubleIsShooted) {
         var totalSelectsValuesLength = getValuesTotalLength(selects);
         var serviceTagsInUse = !!totalSelectsValuesLength;
         var checkboxMustBeDisabled =
           (charsLimit - totalSelectsValuesLength - serviceTagsInUse) < troubleIsShootedCheckbox.value.length;
         troubleIsShootedCheckbox.disabled = checkboxMustBeDisabled;
-      };
-
+      }
       textField.maxLength = getMaxLegthForTextField(troubleIsShootedCheckbox, selects);
       сharactersCounter.innerHTML = getCharactersLimit(textField);
       this.previousValue = this.value;
       renameThread(null, null, selects);
     };
-  };
+  }
 })();
 
 //*************************************************************************************
