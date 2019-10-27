@@ -220,9 +220,9 @@
     renamePanelTextField.style.marginRight = '12px';
 
     // Счётчик оставшихся символов
-    var сharactersCounter = document.createElement('span');
-    сharactersCounter.id = 'сharactersCounter';
-    сharactersCounter.innerHTML = getCharactersLimit(renamePanelTextField);
+    var charactersCounter = document.createElement('span');
+    charactersCounter.id = 'charactersCounter';
+    charactersCounter.innerHTML = getCharactersLimit(renamePanelTextField);
 
     // Скрытое поле, где будем хранить последнее удачное наименовани темы
     // Необходимо для отката к этом значению, если попытались отправить пустоту
@@ -234,7 +234,7 @@
     // Окончательное формирование панели переименования
     renamePanelWrapper.appendChild(serviceTagsControlsWrapper);
     renamePanelWrapper.appendChild(renamePanelTextField);
-    renamePanelWrapper.appendChild(сharactersCounter);
+    renamePanelWrapper.appendChild(charactersCounter);
     renamePanelWrapper.appendChild(hidden);
 
     renamePanelWrapper.id = RENAME_PANEL_ID;
@@ -380,7 +380,7 @@
   }
   // =========================================================
   var textField = document.getElementById('renamePanelTextField');
-  var сharactersCounter = document.getElementById('сharactersCounter');
+  var charactersCounter = document.getElementById('charactersCounter');
   var troubleIsShootedCheckbox = document.getElementById('troubleIsShooted');
   var selects = document.querySelectorAll('#renamePanel select');
 
@@ -391,7 +391,7 @@
     var threadTitle = textField.value;
     if (!threadTitle) {
       textField.value = document.getElementById('renamePanelHidden').value;
-      сharactersCounter.innerHTML = getCharactersLimit(textField);
+      charactersCounter.innerHTML = getCharactersLimit(textField);
     } else {
       renameThread(threadTitle, null, null);
     }
@@ -401,7 +401,7 @@
   // и установить доступность/недоступность галочки, но не деативировтаь её, если она установлена
   textField.oninput = function () {
     var charsLimit = getCharactersLimit(this);
-    сharactersCounter.innerHTML = charsLimit;
+    charactersCounter.innerHTML = charsLimit;
     if (!troubleIsShootedCheckbox.checked) {
       // Наличие меток предполагает один символ, чтобы отделить их список от названия темы
       // Если у нас метки не используются, то для их установки (в данном случае "РЕШЕНО")
@@ -420,7 +420,7 @@
   // установлена ли метка "решено" или нет, и отправим запрос на переименование
   troubleIsShootedCheckbox.onchange = function () {
     textField.maxLength = getMaxLegthForTextField(this, selects);
-    сharactersCounter.innerHTML = getCharactersLimit(textField);
+    charactersCounter.innerHTML = getCharactersLimit(textField);
     renameThread(null, this, null);
   };
 
@@ -486,7 +486,7 @@
         troubleIsShootedCheckbox.disabled = checkboxMustBeDisabled;
       }
       textField.maxLength = getMaxLegthForTextField(troubleIsShootedCheckbox, selects);
-      сharactersCounter.innerHTML = getCharactersLimit(textField);
+      charactersCounter.innerHTML = getCharactersLimit(textField);
       this.previousValue = this.value;
       renameThread(null, null, selects);
     };
