@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Переименование темы с её страницы без перезагрузки
-// @version      1
+// @version      2.0.0
 // @description  Добавляет в начале темы текстовое поле, через к-рое можно изменить её название
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/thread_renamer.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/thread_renamer.user.js
@@ -28,6 +28,10 @@
     var p = '^' + st + '\\s*';
     return new RegExp(p, flags);
   };
+
+  String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  }
 
   // ================================================================
 
@@ -137,6 +141,12 @@
     troubleIsShootedLabel.appendChild(troubleIsShootedSpan);
     troubleIsShootedLabel.style.cursor = 'pointer';
 
+    // uncaps
+    var uncapsButton = document.createElement('button');
+    uncapsButton.id = 'uncaps';
+    uncapsButton.innerHTML = 'Uncaps';
+    uncapsButton.style.marginLeft = '10px';
+
     // Выпадающий список метки для ЯП
     var programmingLanguageSelect = createServiceTagsList(
       languagesLists,
@@ -198,6 +208,7 @@
     // Подцепим органы управление метками и иконку к обёртке
     serviceTagsControlsWrapper.appendChild(programmingLanguageSelect);
     serviceTagsControlsWrapper.appendChild(troubleIsShootedLabel);
+    serviceTagsControlsWrapper.appendChild(uncapsButton);
     serviceTagsControlsWrapper.appendChild(progressIcon);
     serviceTagsControlsWrapper.appendChild(troubleIsShootedHidden);
     serviceTagsControlsWrapper.appendChild(serviceTagsFromSelectsHidden);
@@ -376,6 +387,7 @@
   var textField = document.getElementById('renamePanelTextField');
   var charactersCounter = document.getElementById('charactersCounter');
   var troubleIsShootedCheckbox = document.getElementById('troubleIsShooted');
+  var uncapsButton = document.getElementById('uncaps');
   var selects = document.querySelectorAll('#renamePanel select');
 
   // =========================================================
@@ -439,6 +451,19 @@
   // на переименование темы.
   textField.onchange = function () {
     tryToRenameThread(this);
+  };
+
+  uncapsButton.onclick = function (e) {
+    e.preventDefault();
+
+    var newTitle = textField.value.toLowerCase().capitalize();
+
+    if (!window.confirm(`Rename to "${newTitle}"?`)) {
+      return;
+    }
+
+    textField.value = newTitle;
+    renameThread(newTitle, null, null);
   };
 
   // =========================================================
