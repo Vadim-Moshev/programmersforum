@@ -19,3 +19,19 @@ class Moshev_PFConsts {
     }
   }
 }
+
+class Programmersforum {
+  static renumberPosts(aStart = 1) {
+    if (typeof aStart !== 'number') {
+      throw new TypeError('Аргумент функции renumberPosts должен быть числом.')
+    }
+
+    const hyperReferencesWithPostNumbers = document.querySelectorAll('a[id^="postcount"]');
+    for (let i = 0, newNumber = aStart; i < hyperReferencesWithPostNumbers.length; i++, newNumber++) {
+      const currentHyperReference = hyperReferencesWithPostNumbers[i];
+      currentHyperReference.setAttribute('name', newNumber);
+      currentHyperReference.href = currentHyperReference.href.replace(/postcount=\d+/, `postcount=${newNumber}`)
+      currentHyperReference.querySelector('strong').textContent = newNumber;
+    }
+  }
+}
