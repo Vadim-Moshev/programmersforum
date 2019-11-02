@@ -1,4 +1,4 @@
-class Moshev_PFConsts {
+class UUU {
   static get PATH_TO_LOADER_ICON() {
     return '/images/misc/progress.gif'
   }
@@ -20,7 +20,7 @@ class Moshev_PFConsts {
   }
 }
 
-class Programmersforum {
+class Moshev_PFConsts {
   static get PATH_TO_LOADER_ICON() {
     return '/images/misc/progress.gif'
   }
