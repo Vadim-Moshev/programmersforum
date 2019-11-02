@@ -25,6 +25,10 @@ class Moshev_PFConsts {
     return '/images/misc/progress.gif'
   }
 
+  static get FT() {
+    return 42
+  }
+
   // ==========================================================================
 
   static renumberPosts(aStart = 1) {
