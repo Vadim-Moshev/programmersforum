@@ -3,7 +3,7 @@ class Moshev_PFConsts {
 		return '/images/misc/progress.gif'
 	}
 
-  // ==========================================================================
+  // ===========================================================================
 
   static renumberPosts(aStart = 1) {
     if (typeof aStart !== 'number') {
