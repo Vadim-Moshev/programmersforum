@@ -36,4 +36,3 @@ class Programmersforum {
   }
 
   static vv = 42;
-}
