@@ -34,4 +34,6 @@ class Programmersforum {
       currentHyperReference.querySelector('strong').textContent = newNumber;
     }
   }
+
+  static vv = 42;
 }
