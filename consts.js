@@ -14,8 +14,8 @@ class Moshev_PFConsts {
     for (let i = 0, newNumber = aStart; i < hyperReferencesWithPostNumbers.length; i++, newNumber++) {
       const currentHyperReference = hyperReferencesWithPostNumbers[i];
       currentHyperReference.setAttribute('name', newNumber);
-      currentHyperReference.href = currentHyperReference.href.replace(/postcount=\d+/, `postcount=${newNumber}`)
-      currentHyperReference.querySelector('strong').textContent = newNumber;
+      currentHyperReference.href = currentHyperReference.href.replace(/postcount=\d+/, `postcount=${newNumber}`);
+      currentHyperReference.querySelector('strong').textContent = newNumber
     }
   }
 }
