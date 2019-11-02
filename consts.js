@@ -1,4 +1,10 @@
 class Programmersforum {
+  static get PATH_TO_LOADER_ICON() {
+    return '/images/misc/progress.gif'
+  }
+
+  // ==========================================================================
+
   static renumberPosts(aStart = 1) {
     if (typeof aStart !== 'number') {
       throw new TypeError('Аргумент функции renumberPosts должен быть числом.')
@@ -12,9 +18,7 @@ class Programmersforum {
       currentHyperReference.querySelector('strong').textContent = newNumber;
     }
   }
-
-  static vv = 42;
-};
+}
 
 class Moshev_PFConsts {
   static get PATH_TO_LOADER_ICON() {
@@ -36,5 +40,4 @@ class Moshev_PFConsts {
       currentHyperReference.querySelector('strong').textContent = newNumber;
     }
   }
-};
-
+}
