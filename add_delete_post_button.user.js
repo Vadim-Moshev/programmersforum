@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Кнопка "Удалить сообщение"
-// @version      1.2
+// @version      1.3
 // @description  Добавляет кнопку удалить сообщение и соответствующий функционал
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
@@ -383,7 +383,7 @@
 									let newPostId = getPostId(clone);
 									// регистрация конткектного меню ника, репутации и "быстрый ответ на это сообщение"
 										vbmenu_register("postmenu_" + newPostId, true);
-										vbrep_register(newPostId.toString());
+										// vbrep_register(newPostId.toString());
 										setQuickQuoteToPost(clone);
 								};
 								postToInsert = postToInsert.nextElementSibling;
