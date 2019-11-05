@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Кнопка "Удалить сообщение"
-// @version      1.3.1
+// @version      1.2
 // @description  Добавляет кнопку удалить сообщение и соответствующий функционал
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
@@ -40,7 +40,6 @@
         'linear-gradient(to right, #7D7D7D, #4A4A4A)'][STYLE_ID - 1];
   const isApproved = APost => !APost.querySelector('img[src="images/misc/moderated.gif"]');
   const isAlive = APost => !!APost.querySelector('a.bigusername');
-  const upperPostNumber = +document.querySelector('a[id^="postcount"]').getAttribute('name');
 
   // ========================================================================
 
@@ -176,10 +175,6 @@
     let quickReplyButton = APost.querySelector('a[id^="qr_"]');
     let quickReplyButtonParent = quickReplyButton.parentNode; // Ошибка
     let postId = +quickReplyButton.id.replace('qr_', '');
-    let postNumber = APost
-      .querySelector('a[href^="showpost.php"]')
-      .href
-      .match(/postcount=(\d+)/);
 
     let deletePostButton = mkElem(
       'div',
@@ -202,7 +197,7 @@
     );
 
     deletePostButton.onclick = function() {
-      openPanel(AIsFirstPost, postId, AIsUnapproved, postNumber);
+      openPanel(AIsFirstPost, postId, AIsUnapproved);
     };
 
     quickReplyButtonParent.appendChild(deletePostButton);
@@ -388,8 +383,7 @@
                   let newPostId = getPostId(clone);
                   // регистрация конткектного меню ника, репутации и "быстрый ответ на это сообщение"
                     vbmenu_register("postmenu_" + newPostId, true);
-                    // vbrep_register(newPostId.toString());
-                    // регисрацию репутации пока отключил, так как её отключили на самом форуме
+                    //vbrep_register(newPostId.toString());
                     setQuickQuoteToPost(clone);
                 };
                 postToInsert = postToInsert.nextElementSibling;
@@ -418,23 +412,12 @@
               };
           };
 
-          // https://www.programmersforum.ru/showthread.php?t=320237
-          // 27 28 21 30 27 27 27 28 22 23 24 26 30 29 27 29 29 26 26 21 25 26 25
-          // => 27 - 30 === дыра
           // Скорректируем порядковые номер постов и ссылку на них на странице,
-          // если удаляемое сообщение не последнее на странице или одобрено
+          // если удаляемое сообщение не последнее на странице или не одобрено
             if (deletedPostWasLastOnPage || deletedPostWasUnapproved ) {
-              return
-            }
-
-            // debugger;
-            const L = document.querySelectorAll('a[id^="postcount"]');
-            clWrite(L);
-            let deletedPostNumber = +postNumberHiddenField.value;
-             Moshev_PFConsts.renumberPosts(upperPostNumber, deletedPostNumber);
-            // clWrite(upperPostNumber)
-
-            /*let numberToLastPost;
+              return;
+            };
+            let numberToLastPost;
             let postToChangeNumberIn = nextToDeletedPost;
             while (postToChangeNumberIn.id != 'lastpost') {
               let identifyerOfPostToChangeNumberIn = getPostId(postToChangeNumberIn);
@@ -451,19 +434,19 @@
               };
 
               postToChangeNumberIn = postToChangeNumberIn.nextElementSibling;
-            };*/
+            };
           // у добавленного сообщения не корректируется номер (он остаётся равным предпоследнему)
           // не знаю пока, почему так, возможно это связано с тем, что объекты копируются по ссылке,
           // а не содержимому. Корректируем последний пост отдельно. Да, это по-быдлокоредски.
           // Сначала получим последний одобренный пост, а потом всё остальное
-            /*let s = getLastAlivePost(document.body);
+            let s = getLastAlivePost(document.body);
             while(!isApproved(s)) {
               s = s.previousElementSibling;
             };
             let a = s.querySelector('a[id^="postcount"]');
             a.href = a.href.replace(/\d+$/, numberToLastPost);
             a.name = numberToLastPost;
-            a.childNodes[0].textContent = numberToLastPost;*/
+            a.childNodes[0].textContent = numberToLastPost;
         },
         failure: function() {
           alert('Ошибка отправки запроса. Повторите попытку позднее.');
@@ -513,12 +496,9 @@
       addDeletePostButtonPanelOverlay.appendChild(panel);
 
       // Скрытые поля для ID сообщения
-        const mkHiddenField = _ => mkElem('input', {type: 'hidden'});
-
-        let postIdHiddenField = mkHiddenField();
-        let isFirstPostHiddenField = mkHiddenField();
-        let isUnapprovedHiddenField = mkHiddenField();
-        let postNumberHiddenField = mkHiddenField();
+        let postIdHiddenField = mkElem('input', {type: 'hidden'});
+        let isFirstPostHiddenField = mkElem('input', {type: 'hidden'});
+        let isUnapprovedHiddenField = mkElem('input', {type: 'hidden'});
 
         panel.appendChild(postIdHiddenField);
 
@@ -678,7 +658,7 @@
 
   // ========================================================================
 
-  function openPanel(AIsFirstPost, APostId, AIsUnapproved, aPostNumber) {
+  function openPanel(AIsFirstPost, APostId, AIsUnapproved) {
     toggleScrollBars(false);
     addDeletePostButtonPanelOverlay.style.display = 'block';
 
@@ -686,7 +666,6 @@
       isFirstPostHiddenField.value = +AIsFirstPost;
       postIdHiddenField.value = APostId;
       isUnapprovedHiddenField.value = +AIsUnapproved;
-      postNumberHiddenField.value = aPostNumber;
 
     // Сбросить состояние органов управления
       deletingReasonsSelectFirstOption.selected = true;
