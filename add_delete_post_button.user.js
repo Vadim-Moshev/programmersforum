@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Кнопка "Удалить сообщение"
-// @version      1.2
+// @version      1.3
 // @description  Добавляет кнопку удалить сообщение и соответствующий функционал
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/add_delete_post_button.user.js
@@ -25,21 +25,24 @@
       return;
     };
 
-  const clWrite = msg => {console.log(msg)};
-  const getById = id => document.getElementById(id);
-  const mkText = txt => document.createTextNode(txt);
-  const STYLE_ID = +document.querySelector('select[name="styleid"] option[selected]').value;
-  const THREAD_ID = getById('inlinemodform').action.match(/threadid=(\d+)/)[1];
-  const ANIMATION_CLASSES_LIST = [];
-  const goToParentUnit = _ => {document.location = document.querySelector('span.navbar:last-child a').href};
-  const PAGINATORS_SET = document.querySelectorAll('div.pagenav');
-  const POSTS_CONTAINER = getById('posts');
-  const deleteElement = AElement => AElement.parentNode.removeChild(AElement);
-  const BUTTON_BACKGROUND_COLOR = ['839DCA', '7D7D7D'][STYLE_ID - 1];
-  const BUTTON_BACKGROUND_GRADIENT = ['linear-gradient(to right, #839DCA, #35496C)',
-        'linear-gradient(to right, #7D7D7D, #4A4A4A)'][STYLE_ID - 1];
-  const isApproved = APost => !APost.querySelector('img[src="images/misc/moderated.gif"]');
-  const isAlive = APost => !!APost.querySelector('a.bigusername');
+  const
+    getById                    = id => document.getElementById(id),
+    mkText                     = txt => document.createTextNode(txt),
+    STYLE_ID                   = +document.querySelector('select[name="styleid"] option[selected]').value,
+    THREAD_ID                  = getById('inlinemodform').action.match(/threadid=(\d+)/)[1],
+    ANIMATION_CLASSES_LIST     = [],
+    goToParentUnit             = _ => {document.location = document.querySelector('span.navbar:last-child a').href},
+    PAGINATORS_SET             = document.querySelectorAll('div.pagenav'),
+    POSTS_CONTAINER            = getById('posts'),
+    deleteElement              = AElement => AElement.parentNode.removeChild(AElement),
+    BUTTON_BACKGROUND_COLOR    = ['839DCA', '7D7D7D'][STYLE_ID - 1],
+    BUTTON_BACKGROUND_GRADIENT = [
+      'linear-gradient(to right, #839DCA, #35496C)',
+      'linear-gradient(to right, #7D7D7D, #4A4A4A)'
+    ][STYLE_ID - 1],
+    isApproved                 = APost => !APost.querySelector('img[src="images/misc/moderated.gif"]'),
+    isAlive                    = APost => !!APost.querySelector('a.bigusername'),
+    UPPER_POST_NUMBER_ON_PAGE  = +document.querySelector('a[id^="postcount"]').getAttribute('name');
 
   // ========================================================================
 
@@ -53,7 +56,7 @@
     };
     const CURRENT_PAGE_NUMBER = currentPageNumber;
     const THREAD_PAGES_NUMBER = threadPagesNumber;
-    let thisPageIsLast = (CURRENT_PAGE_NUMBER == THREAD_PAGES_NUMBER);
+    let thisPageIsLast = (CURRENT_PAGE_NUMBER === THREAD_PAGES_NUMBER);
 
     let oldPaginatorsSet = PAGINATORS_SET;
 
@@ -121,7 +124,7 @@
 
   // ========================================================================
 
-  // Функция преобразует HTML-текст в DOM иерархиею элементов
+  // Функция преобразует HTML-текст в DOM иерархию элементов
   // На выходе - div-контейнер с иерархией
   function HTMLTextToDOM(AHTMLText) {
     let container = mkElem('div');
@@ -208,7 +211,8 @@
 
   function setQuickQuoteToPost(APost) {
     // Добавим функцию быстрой цитаты
-    // Автор кода - Copyright (c) 2016 Alex P. (alexp.frl@gmail.com, http://programmersforum.ru/member.php?u=129198)
+    // Автор кода - Copyright (c) 2016 Alex P. (alexp.frl@gmail.com, http://programmersforum.ru/member.php?u=129198,
+    // https://github.com/AlexP11223)
       function scrollIntoMiddle(element) {
         var elementRect = element.getBoundingClientRect();
         var absoluteElementTop = elementRect.top + window.pageYOffset;
@@ -292,9 +296,11 @@
             if (+isFirstPostHiddenField.value) {
               toggleScrollBars(false);
               document.body.className = ANIMATION_CLASSES_LIST.getRandomElement();
-              setTimeout(goToParentUnit, 1000);
-              return;
-            };
+              document.body.addEventListener('transitionend', _ => {
+                goToParentUnit()
+              });
+              return
+            }
 
           if (+isUnapprovedHiddenField.value) {
           // Интеграция со скриптом уведомления о непроверенных темах/сообщениях
@@ -319,135 +325,114 @@
             let deletedPostElement = getById('edit' + postIdHiddenField.value).parentNode.parentNode;
 
           // И на его враппер, который будем сжимать
-            let deletedPostElementWrapper = deletedPostElement.parentNode;
+          let deletedPostElementWrapper = deletedPostElement.parentNode;
+          let deletedPostElementWrapperClientHeight = deletedPostElementWrapper.clientHeight;
 
           let deletedPostWasUnapproved = !isApproved(deletedPostElementWrapper);
           let deletedPostWasLastOnPage = isLastAlivePostOnPage(deletedPostElementWrapper);
           let nextToDeletedPost = deletedPostElementWrapper.nextElementSibling;
           let lastPostOnCurrentPageId = getPostId( getLastAlivePost(document.body) );
 
-          // назначим высоту врапперу, чтобы применить класс сжатия высоты
-            let h = deletedPostElementWrapper.clientHeight + 'px';
-            deletedPostElementWrapper.setAttribute('style', 'height: ' + h);
-          // установим класс сжатия высоты до нуля
-            deletedPostElementWrapper.className = 'serviceStyle_decreaseHeightToZero';
+          // идея по сжатию по высоте из https://ymatuhin.ru/front-end/height_transition_css/
+          // let isItNecessaryToRemovePostWrapper = false;
+          let wasPostDeletingQuerySent = false;
+          deletedPostElementWrapper.classList.add('wrapper-shrink-class');
+          deletedPostElementWrapper.style.height = `${deletedPostElementWrapperClientHeight}px`;
 
           // Анимация удаления
-            toggleScrollBars(false, 'X');
-            deletedPostElement.className = ANIMATION_CLASSES_LIST.getRandomElement();
+          toggleScrollBars(false, 'X');
+          deletedPostElement.classList.add( ANIMATION_CLASSES_LIST.getRandomElement() );
 
-          // плавно сожмём враппер по высоте до нуля, удалив атрибут style
-            setTimeout(
-              _ => {deletedPostElementWrapper.removeAttribute('style')},
-              1000
-            );
+          deletedPostElement.addEventListener('transitionend', aEvent => {
+            aEvent.stopPropagation();
 
-          // Удаления враппера элемента из DOM-дерева
-            setTimeout(
-              _ => {toggleScrollBars(true, 'X'); deleteElement(deletedPostElementWrapper)},
-              2000
-            );
+            if (wasPostDeletingQuerySent) {
+              return
+            }
 
-          // Если кол-во постов после удаления равно 0 (последний пост на стр.), - переход в род раздел
-            setTimeout(
-              function() {
-                let remainingPostsNumberOnCurrentPages = POSTS_CONTAINER
-                  .querySelectorAll('#posts div[align="center"] .bigusername')
-                  .length;
-                if (!remainingPostsNumberOnCurrentPages) {
-                  goToParentUnit();
-                };
-              },
-              2300 // Через 0,3 сек после удаления поста из DOM-дерева
-            );
+            wasPostDeletingQuerySent = true;
 
-          if (!thisPageIsLast) {
-            let loadedDOMAfterPostDeleting = HTMLTextToDOM(AResponseObject.responseText);
-            let postToInsert = loadedDOMAfterPostDeleting // Следующий за тем, что был последним перед удалением
-              .querySelector('#edit' + lastPostOnCurrentPageId) // lastPostOnCurrentPageId - до удаления
-              .parentNode
-              .parentNode
-              .parentNode
-              .nextElementSibling;
+            // Вставляем сообщение, взятое со следующей страницы (если текущая — не последняя)
+            if (!thisPageIsLast) {
+              let loadedDOMAfterPostDeleting = HTMLTextToDOM(AResponseObject.responseText);
+              let postToInsert = loadedDOMAfterPostDeleting // Следующий за тем, что был последним перед удалением
+                .querySelector('#edit' + lastPostOnCurrentPageId) // lastPostOnCurrentPageId - до удаления
+                .parentNode
+                .parentNode
+                .parentNode
+                .nextElementSibling;
 
-            // Вставляем сообщение со следующей страницы
-              let lp = getById('lastpost');
-              let containerToInsertInto = lp.parentNode;
-              while (postToInsert.id != 'lastpost') { // нам надо на id поста, а id элемента
-                if ( isAlive(postToInsert) ) {
-                  let clone = postToInsert.cloneNode(true);
-                  containerToInsertInto.insertBefore(clone, lp);
-                  let isUnapproved = !isApproved(clone);
-                  insertButtonIntoPost(clone, false, isUnapproved);
+                let lp = getById('lastpost');
+                let containerToInsertInto = lp.parentNode;
+                while (postToInsert.id !== 'lastpost') { // нам надо не id поста, а id элемента
+                  if ( isAlive(postToInsert) ) {
+                    let clone = postToInsert.cloneNode(true);
+                    containerToInsertInto.insertBefore(clone, lp);
+                    let isUnapproved = !isApproved(clone);
+                    insertButtonIntoPost(clone, false, isUnapproved);
 
-                  let newPostId = getPostId(clone);
-                  // регистрация конткектного меню ника, репутации и "быстрый ответ на это сообщение"
+                    let newPostId = getPostId(clone);
+
+                    // регистрация конткектного меню ника, репутации и "быстрый ответ на это сообщение"
                     vbmenu_register("postmenu_" + newPostId, true);
-                    //vbrep_register(newPostId.toString());
+                    // функкция регистрации репутации отключена, так как она отключена на форуме
+                    // vbrep_register(newPostId.toString());
                     setQuickQuoteToPost(clone);
+                  };
+                  postToInsert = postToInsert.nextElementSibling;
                 };
-                postToInsert = postToInsert.nextElementSibling;
-              };
-              vB_AJAX_QuickEdit_Init('posts'); // Иниализация быстрого редактора
-              qr_init(); // И быстрого ответа
+                vB_AJAX_QuickEdit_Init('posts'); // Иниализация быстрого редактора
+                qr_init(); // И быстрого ответа
 
-            // Проверим, существует ли пагинатор после удаления
-            // если нет - удалим текущий и считаем текущую страницу последний
-            // если да - проверим с помощью него, является ли текущая страница последней
-              let newPaginatorsSet = loadedDOMAfterPostDeleting.querySelectorAll('.pagenav');
-              if (!newPaginatorsSet.length) {
-                deleteElement(oldPaginatorsSet[0]);
-                deleteElement(oldPaginatorsSet[1]);
-                thisPageIsLast = true;
-              } else {
-                let p = newPaginatorsSet[0];
-                let nextToAlt2Tag = p.querySelector('.alt2').nextElementSibling;
-                thisPageIsLast = (nextToAlt2Tag.className != 'alt1');
+              // Проверим, существует ли пагинатор после удаления
+              // если нет - удалим текущий и считаем текущую страницу последний
+              // если да - проверим с помощью него, является ли текущая страница последней
+                let newPaginatorsSet = loadedDOMAfterPostDeleting.querySelectorAll('.pagenav');
+                if (!newPaginatorsSet.length) {
+                  deleteElement(oldPaginatorsSet[0]);
+                  deleteElement(oldPaginatorsSet[1]);
+                  thisPageIsLast = true;
+                } else {
+                  let p = newPaginatorsSet[0];
+                  let nextToAlt2Tag = p.querySelector('.alt2').nextElementSibling;
+                  thisPageIsLast = (nextToAlt2Tag.className != 'alt1');
 
-                // Обновим пагинаторы
-                  oldPaginatorsSet[0].parentNode.replaceChild(newPaginatorsSet[0], oldPaginatorsSet[0]);
-                  oldPaginatorsSet[1].parentNode.replaceChild(newPaginatorsSet[1], oldPaginatorsSet[1]);
+                  // Обновим пагинаторы
+                    oldPaginatorsSet[0].parentNode.replaceChild(newPaginatorsSet[0], oldPaginatorsSet[0]);
+                    oldPaginatorsSet[1].parentNode.replaceChild(newPaginatorsSet[1], oldPaginatorsSet[1]);
 
-                  oldPaginatorsSet = newPaginatorsSet;
-              };
-          };
-
-          // Скорректируем порядковые номер постов и ссылку на них на странице,
-          // если удаляемое сообщение не последнее на странице или не одобрено
-            if (deletedPostWasLastOnPage || deletedPostWasUnapproved ) {
-              return;
+                    oldPaginatorsSet = newPaginatorsSet;
+                };
             };
-            let numberToLastPost;
-            let postToChangeNumberIn = nextToDeletedPost;
-            while (postToChangeNumberIn.id != 'lastpost') {
-              let identifyerOfPostToChangeNumberIn = getPostId(postToChangeNumberIn);
-              let c = !isAlive(postToChangeNumberIn)
-                || !isApproved(postToChangeNumberIn)
-                || !identifyerOfPostToChangeNumberIn;
-              if (!c) {
-                let a = postToChangeNumberIn.querySelector('a[id^="postcount"]');
-                let newNumber;
-                a.childNodes[0].textContent = newNumber = +a.childNodes[0].textContent - 1;
-                a.href = a.href.replace(/\d+$/, newNumber);
-                a.name = newNumber;
-                numberToLastPost = newNumber+1;
-              };
 
-              postToChangeNumberIn = postToChangeNumberIn.nextElementSibling;
-            };
-          // у добавленного сообщения не корректируется номер (он остаётся равным предпоследнему)
-          // не знаю пока, почему так, возможно это связано с тем, что объекты копируются по ссылке,
-          // а не содержимому. Корректируем последний пост отдельно. Да, это по-быдлокоредски.
-          // Сначала получим последний одобренный пост, а потом всё остальное
-            let s = getLastAlivePost(document.body);
-            while(!isApproved(s)) {
-              s = s.previousElementSibling;
-            };
-            let a = s.querySelector('a[id^="postcount"]');
-            a.href = a.href.replace(/\d+$/, numberToLastPost);
-            a.name = numberToLastPost;
-            a.childNodes[0].textContent = numberToLastPost;
+            // плавно сожмём враппер по высоте до нуля
+            deletedPostElementWrapper.style.height = `0`;
+
+            // удаление врапера
+            deletedPostElementWrapper.addEventListener('transitionend', _ => {
+
+              toggleScrollBars(true, 'X');
+              deletedPostElementWrapper.remove();
+
+            // Если кол-во постов после удаления равно 0 (последний пост на стр.), - переход в род раздел
+              let remainingPostsNumberOnCurrentPages = POSTS_CONTAINER
+                .querySelectorAll('#posts div[align="center"] .bigusername')
+                .length;
+              if (remainingPostsNumberOnCurrentPages === 0) {
+                goToParentUnit();
+              }
+
+              // Скорректируем порядковые номер постов и ссылку на них на странице,
+              // если удаляемое сообщение не последнее на странице и одобрено
+              if (deletedPostWasLastOnPage || deletedPostWasUnapproved ) {
+                return
+              }
+
+              Moshev_PFConsts.renumberPosts(UPPER_POST_NUMBER_ON_PAGE)
+            })
+          });
         },
+
         failure: function() {
           alert('Ошибка отправки запроса. Повторите попытку позднее.');
           closePanel();
@@ -670,6 +655,7 @@
     // Сбросить состояние органов управления
       deletingReasonsSelectFirstOption.selected = true;
       deletingReasonTextField.value = '';
+      deletingReasonTextField.focus();
       loaderPicture.style.display = 'none';
 
     // Установить предупреждение, если это первый пост
@@ -704,7 +690,7 @@
 
       .dps_decreasing {
         transform: scale(0);
-        transition: all 1s ease-out
+        transition: all 1s ease-in
       }
 
       .dps_oneWayBoomerang {
@@ -734,12 +720,12 @@
         transition: all 1s ease-out;
       }
 
-      .serviceStyle_decreaseHeightToZero {
-        height: 0px;
-        transition: all 1s ease-out
-      }
+      .wrapper-shrink-class {
+        transition: height 1s cubic-bezier(.43,1.8,.36,.51);
+
     `) );
     document.head.appendChild(styleTag);
+
     ANIMATION_CLASSES_LIST.push('dps_fadeout');
     ANIMATION_CLASSES_LIST.push('dps_swirl');
     ANIMATION_CLASSES_LIST.push('dps_zoomInFadeout');
@@ -757,7 +743,7 @@
     for (let i = 0; i < postsSet.length; i++) {
       let post = postsSet[i];
       if (isAlive(post)) {
-        let isFirstPost = (i == 0) && (CURRENT_PAGE_NUMBER == 1);
+        let isFirstPost = (i === 0) && (CURRENT_PAGE_NUMBER === 1);
         let isUnapproved = !isApproved(post);
 
         insertButtonIntoPost(post, isFirstPost, isUnapproved);
