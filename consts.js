@@ -6,8 +6,6 @@ class Moshev_PFConsts {
   // ==========================================================================
 
   static renumberPosts(aStart = 1) {
-    console.log('новая библиотека подключена')
-
     if (typeof aStart !== 'number') {
       throw new TypeError('Аргумент функции renumberPosts должен быть числом.')
     }
