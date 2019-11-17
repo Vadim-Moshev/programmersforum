@@ -38,7 +38,6 @@ class Moshev_PFConsts {
       SMALLFONT_CLASS_SEARCH_SELECTOR = 'table[id^="post"] tr:nth-child(2) td:first-child div.smallfont',
       SINGATURE_BLOCK_SEARCH_SELECTOR = 'td[id^="td_post_"] div.signature';
 
-
     if (typeof aUserName !== 'string') {
       throw new TypeError('Аргумент функции setSuspendedStatusByUsername должен быть строкой.')
     }
