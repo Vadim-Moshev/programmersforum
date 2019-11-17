@@ -1,18 +1,17 @@
 // ==UserScript==
 // @name         Блокировка пользователя
-// @version      1.1
+// @version      2
 // @description  Блокировка пользователя без захода в админку
 // @downloadURL  https://github.com/Vadim-Moshev/programmersforum/raw/master/ban_user.user.js
 // @updateURL    https://github.com/Vadim-Moshev/programmersforum/raw/master/ban_user.user.js
 // @author       Vadim Moshev
 // @include      *programmersforum.ru/showthread.php*
-// @require		   https://raw.githubusercontent.com/Vadim-Moshev/programmersforum/master/consts.js
+// @require      https://raw.githubusercontent.com/Vadim-Moshev/programmersforum/master/consts.js
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    const clWrite = msg => {console.log(msg);};
     const getById = id => document.getElementById(id);
     const mkText = txt => document.createTextNode(txt);
 
@@ -38,7 +37,7 @@
       return e;
     };
 
-    // ------------------------------------------------------------------------    
+    // ------------------------------------------------------------------------
 
     // Защита от повторного запуска
     	const BAN_USER_ID = 'banUserPanelOverlay';
@@ -109,7 +108,7 @@
 
 		  // Имя пользователя, к которому примяется наказание
 	  		let userNameBold = mkElem('b');
-	  		panel.appendChild( mkText('Применить наказание к ') );
+	  		panel.appendChild( mkText('Применить наказание / изменить параметры блокировки для ') );
 	  		panel.appendChild(userNameBold);
 
 	  	// Отчеркнуть линией
@@ -171,8 +170,11 @@
 		  		banUserPeriodSelect.value = "PERMANENT";
 
 		  		let banUserReasons = [
-		  			'Спам',
-		  			'Нарушитель-рецедивист'
+		  			'Спамер',
+		  			'Нарушитель-рецедивист',
+		  			'Неадекватное поведение',
+		  			'Логин не соответствует правилам',
+		  			'По просьбе самого пользователя'
 		  		];
 
 		  		let banUserReasonsSelect = mkElem('select', null, {width: "100%"});
@@ -248,7 +250,7 @@
 			  			8216: 145, 1103: 255, 1043: 195, 1105: 184, 1039: 143, 1026: 128, 1106: 144, 8218: 130, 1107: 131, 8217: 146,
 			  			1108: 186, 1109: 190
 			  		};
-				    
+
 				    let L = [];
 				    for (let i = 0; i < s.length; i++) {
 				        let ord = s.charCodeAt(i);
@@ -291,33 +293,7 @@
 
 	  				let callbacks = {
 	  					success: function() {
-	  						// Изменить везде статус банимого пользователя на "Заблокирован"
-	  							for (let i = 0; i < postsArray.length; i++) {
-										let bigUsername = postsArray[i].querySelector('a.bigusername');
-
-										// Пропустить трупы сообщений и сообщения, не принаджежащие банимому пользователю
-											if (!bigUsername || bigUsername.textContent != userNameBold.textContent) {
-												continue
-											};
-										
-										let smallFontsPseudoArray = postsArray[i].querySelectorAll('.smallfont');
-										let serviceInfo = smallFontsPseudoArray[smallFontsPseudoArray.length - 2];
-										let smallFontsParent = serviceInfo.parentNode;
-										
-										let childNumber = 1;
-										while (smallFontsParent.querySelectorAll('.smallfont').length > 1) {
-											let tmp = smallFontsParent.children[childNumber];
-											if (tmp.className != 'smallfont') {
-												childNumber++
-											} else {
-												smallFontsParent.removeChild(smallFontsParent.children[childNumber]);
-											};
-										};
-
-										let bannedCaption = mkElem('div', null, null, 'Заблокирован');
-										bannedCaption.className = 'smallfont';
-										smallFontsParent.insertBefore( bannedCaption, serviceInfo );
-									};
+	  						Moshev_PFConsts.setSuspendedStatusToUsername(userNameBold.textContent);
 
 								// Восстановить удалённое сообщение
 									let restoreMessageObjectToSend = {
@@ -411,12 +387,12 @@
 				let userName = bigusername.textContent;
 				let userId = bigusername.href.split('=')[1];
 
-				// Игнорируем представителей администрации и заблокированных
+				// Игнорируем представителей администрации
 					let smallfonts = getById('postmenu_' + postId).parentNode.querySelectorAll('.smallfont');
 					let [firstSmallfont, secondSmallfont] = [	smallfonts[0], smallfonts[1] ];
-					let administrationOrBannedCondition = firstSmallfont.textContent == 'Заблокирован'
-						|| ( (secondSmallfont) && (/^.*(модератор|администратор).*$/i.test( secondSmallfont.textContent )) );
-					if (administrationOrBannedCondition) {
+					let isUserAdministationRepresentative = secondSmallfont
+						&& (/^.*(модератор|администратор).*$/i.test( secondSmallfont.textContent ));
+					if (isUserAdministationRepresentative) {
 						continue;
 					};
 
@@ -434,7 +410,15 @@
 
 				let banUserTr = mkElem('tr');
 
-				let banUserButton = mkElem('div', null, {color: '#921717', fontWeight: 'bold'}, 'Заблокировать пользователя');
+				let banUserButton = mkElem(
+					'div',
+					null,
+					{
+						color: '#921717',
+						fontWeight: 'bold'
+					},
+					'Заблокировать пользователя или изменить его срок/причину блокировки'
+				);
 				banUserButton.onclick = function() {
 					// Скрыть popUp меню после клика по пункту
 						getById('postmenu_' + postId + '_menu').style.display = 'none';
